@@ -1,0 +1,328 @@
+import {
+  ComponentProps,
+  FormEvent,
+  forwardRef,
+  HTMLAttributes,
+  ClipboardEvent,
+  useRef,
+  useState,
+  useEffect,
+} from "react";
+import { cn } from "~/lib/utils";
+import {
+  useBgImage,
+  useSetBgImage,
+  // useCellStates,
+  useIconImage,
+  useSetIconImage,
+  useBgIsIcon,
+  useSetBgIsIcon,
+  useGetCell,
+  useUpdateCell,
+  useBingoStore,
+} from "~/stores/bingoStore";
+import LoadingSpinner from "~/components/LoadingSpinner";
+import { BingoCellStates } from "~/types/bingo";
+import { getCellKey } from "~/utils/bingo";
+import sayu from "~/assets/bingo-bg/sayu.png";
+import kazoo from "~/assets/bingo-bg/kazoo.png";
+import closeyu from "~/assets/bingo-bg/closeyu.webp";
+import closezuha from "~/assets/bingo-bg/closezuha.webp";
+
+interface BingoCardProps extends HTMLAttributes<HTMLDivElement> { }
+
+export default function BingoCard({
+  children,
+  className,
+  ...props
+}: BingoCardProps) {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // const cellStates = useCellStates();
+
+  const bgImage = useBgImage();
+  const setBgImage = useSetBgImage();
+  const iconImage = useIconImage();
+  const setIconImage = useSetIconImage();
+  const bgIsIcon = useBgIsIcon();
+  // const setBgIsIcon = useSetBgIsIcon();
+
+  const imageUrl = closezuha;
+  const displayImage = bgIsIcon ? iconImage : bgImage;
+
+  useEffect(() => {
+    try {
+      setBgImage(imageUrl);
+      setIconImage(imageUrl);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div
+        className={cn(
+          "h-[70vh] flex flex-col items-center justify-center",
+          className,
+        )}
+      >
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      id="bingo-card"
+      className={cn(
+        "relative bg-gray-100 text-black sm:p-8 p-4 rounded-lg w-full max-w-xl self-center",
+        className,
+      )}
+      {...props}
+    >
+      {/* Heading */}
+      <Row className="pb-2 sm:text-5xl text-4xl">
+        {Array.from("BINGO").map((char, index) => (
+          <Cell
+            key={index}
+            cellKey={`cell${index}`}
+            className="border-0 items-end h-fit font-bold select-none"
+          >
+            {char}
+          </Cell>
+        ))}
+      </Row>
+
+      <div className="relative">
+        {/* BG Image */}
+        <div
+          className="absolute opacity-10 inset-0 bg-contain bg-center bg-no-repeat rounded-lg z-0 pointer-events-none"
+          style={{ backgroundImage: `url(${displayImage})` }}
+        />
+
+        {/* Cells */}
+        {[...Array(5)].map((_, rowIndex) => (
+          <Row key={`row${rowIndex}`}>
+            {[...Array(5)].map((_, cellIndex) => (
+              <Cell
+                key={`cell${rowIndex}-${cellIndex}`}
+                cellKey={getCellKey(rowIndex, cellIndex)}
+              >
+                {rowIndex === 2 && cellIndex === 2 ? (
+                  <div className="bg-white w-full h-full">
+                    <img src={iconImage || undefined} />
+                  </div>
+                ) : (
+                  <BingoInput cellKey={getCellKey(rowIndex, cellIndex)} />
+                )}
+              </Cell>
+            ))}
+          </Row>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Row({ className, children, ...props }: ComponentProps<"div">) {
+  return (
+    <div className={cn("flex w-full", className)} {...props}>
+      {children}
+    </div>
+  );
+}
+
+const Cell = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement> & { cellKey: keyof BingoCellStates }
+>(({ className, children, cellKey, ...props }, ref) => {
+  const [selected, setSelected] = useState<boolean>(false);
+
+  const handleClick = () => {
+    setSelected(true);
+  };
+
+  const handleBlur = () => {
+    setSelected(false);
+  };
+
+  return (
+    <div
+      className={cn(
+        "aspect-square flex-1 min-w-0 border flex items-center justify-center",
+        selected ? "" : "",
+        className,
+      )}
+      onClick={handleClick}
+      onBlur={handleBlur}
+      ref={ref}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+});
+Cell.displayName = "Cell";
+
+const BingoInput = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement> & {
+    cellKey: keyof BingoCellStates;
+    placeholder?: string;
+  }
+>(({ cellKey, placeholder, ...props }, ref) => {
+  const [fontSize, setFontSize] = useState(32);
+  const [isEmpty, setIsEmpty] = useState(true);
+  // const getCell = useGetCell();
+  const cellContent = useBingoStore((state) => state.cellStates[cellKey]) ?? "";
+  const updateCell = useUpdateCell();
+
+  const divRef = useRef<HTMLDivElement>(null);
+  const combinedRef = ref || divRef;
+
+  // const cellContent = getCell(cellKey) ?? "";
+
+  const adjustContent = () => {
+    const $div =
+      typeof combinedRef === "function" ? divRef.current : combinedRef?.current;
+    if (!$div) return;
+
+    const $container = $div.parentElement;
+    if (!$container) return;
+
+    // Start with base font size
+    let currentFontSize = 32;
+    $div.style.fontSize = `${currentFontSize}px`;
+
+    // Get container dimensions with some padding
+    const containerWidth = $container.clientWidth;
+    const containerHeight = $container.clientHeight;
+
+    // Check for single word overflow by measuring text width
+    const text = $div.textContent || "";
+    const words = text.split(/\s+/).filter((word) => word.length > 0);
+
+    // Create a temporary span to measure word widths
+    const $measureSpan = document.createElement("span");
+    $measureSpan.style.visibility = "hidden";
+    $measureSpan.style.position = "absolute";
+    $measureSpan.style.fontSize = `${currentFontSize}px`;
+    $measureSpan.style.fontFamily = getComputedStyle($div).fontFamily;
+    $measureSpan.style.whiteSpace = "nowrap";
+    document.body.appendChild($measureSpan);
+
+    // Check if any single word is too wide
+    let maxWordWidth = 0;
+    for (const word of words) {
+      $measureSpan.textContent = word;
+      const wordWidth = $measureSpan.offsetWidth;
+      maxWordWidth = Math.max(maxWordWidth, wordWidth);
+    }
+
+    // Scale down font if any word is too wide
+    while (maxWordWidth > containerWidth && currentFontSize > 8) {
+      currentFontSize -= 1;
+      $measureSpan.style.fontSize = `${currentFontSize}px`;
+      $div.style.fontSize = `${currentFontSize}px`;
+
+      // Re-measure max word width
+      maxWordWidth = 0;
+      for (const word of words) {
+        $measureSpan.textContent = word;
+        const wordWidth = $measureSpan.offsetWidth;
+        maxWordWidth = Math.max(maxWordWidth, wordWidth);
+      }
+    }
+
+    // Clean up measuring element
+    document.body.removeChild($measureSpan);
+
+    // Check for overall content overflow (height/width)
+    while (
+      ($div.scrollHeight > containerHeight ||
+        $div.scrollWidth > containerWidth) &&
+      currentFontSize > 8
+    ) {
+      currentFontSize -= 1;
+      $div.style.fontSize = `${currentFontSize}px`;
+    }
+
+    setFontSize(currentFontSize);
+  };
+
+  const handleInput = (e: FormEvent<HTMLDivElement>) => {
+    const $div = e.currentTarget;
+    const text = $div.textContent || "";
+    setIsEmpty(text.trim().length === 0);
+    updateCell(cellKey, text);
+    adjustContent();
+  };
+
+  const handlePaste = (e: ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData("text/plain");
+    document.execCommand("insertText", false, text);
+    updateCell(cellKey, text);
+    adjustContent();
+  };
+
+  useEffect(() => {
+    const $div =
+      typeof combinedRef === "function" ? divRef.current : combinedRef?.current;
+    if (!$div || $div.textContent === cellContent) return;
+    $div.textContent = cellContent;
+  }, [cellContent]);
+
+  useEffect(() => {
+    const div =
+      typeof combinedRef === "function" ? divRef.current : combinedRef?.current;
+    if (!div) return;
+
+    const container = div.parentElement;
+    if (!container) return;
+
+    const observer = new ResizeObserver(() => {
+      adjustContent();
+    });
+
+    observer.observe(container);
+
+    // Cleanup on unmount
+    return () => {
+      observer.disconnect();
+    };
+  }, [cellContent]);
+
+  return (
+    <div className="relative w-full h-full flex items-center justify-center bg-transparent">
+      <div
+        ref={combinedRef}
+        contentEditable
+        className={cn(
+          "w-full h-full text-center tracking-tight text-black border-none outline-none overflow-hidden resize-none break-words whitespace-pre-wrap flex flex-col items-center justify-center cursor-pointer focus:ring-2 focus:ring-offset-2 focus:ring-purple-700 transition duration-200",
+          isEmpty && "caret-transparent",
+        )}
+        style={{
+          fontSize: `${fontSize}px`,
+          lineHeight: "1.1",
+        }}
+        onInput={handleInput}
+        onPaste={handlePaste}
+        spellCheck={false}
+        data-placeholder={placeholder}
+        defaultValue={cellContent}
+        {...props}
+      />
+      {isEmpty && (
+        <div
+          className="absolute text-gray-400 pointer-events-none text-center"
+          style={{ fontSize: `${fontSize}px` }}
+        ></div>
+      )}
+    </div>
+  );
+});
+BingoInput.displayName = "BingoInput";
