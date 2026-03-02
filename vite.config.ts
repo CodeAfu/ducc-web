@@ -22,4 +22,12 @@ export default defineConfig({
       { find: 'use-sync-external-store/shim/index.js', replacement: 'react' },
     ],
   },
+  build: {
+    cssCodeSplit: false,
+    rollupOptions: {
+      output: {
+        assetFileNames: 'assets/[name][extname]', // no hash
+      },
+    },
+  },
 })

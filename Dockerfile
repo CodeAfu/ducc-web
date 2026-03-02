@@ -35,7 +35,8 @@ RUN mkdir -p /app/data && \
     chown -R nodejs:nodejs /app/data
 
 # Copy only necessary files
-COPY --from=builder /app/.output ./.output
+COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+COPY --from=deps --chown=nodejs:nodejs /app/node_modules ./node_modules
 
 # Expose the port the app will run on
 EXPOSE 3000
@@ -43,4 +44,4 @@ EXPOSE 3000
 USER nodejs
 
 # Start the Node.js server
-CMD ["node", ".output/server/index.mjs"]
+CMD ["npx", "srvx", "--prod", "-s", "/app/dist/client", "dist/server/server.js"]

@@ -30,3 +30,5 @@ env.d.ts
 !.vscode/extensions.json
 
 secrets.txt
+dist
+dist/
