@@ -7,6 +7,7 @@ import { SignedIn, UserButton, SignedOut } from "@clerk/tanstack-react-start";
 import { MenuItem } from "~/lib/types";
 import LoginButton from "./LoginButton";
 import logo from "~/assets/ducc_hed.png";
+import { Link } from "@tanstack/react-router";
 
 export const navItems: MenuItem[] = [
   {
@@ -48,8 +49,8 @@ export default function Navbar() {
     <Fragment>
       <div className="flex shrink-0 items-center justify-between h-12 px-4 bg-card/60 backdrop-blur-sm sticky top-0 z-30 border-b">
         <div className="flex items-center gap-4 h-full">
-          <a
-            href="/"
+          <Link
+            to="/"
             className="display size-10 flex items-center justify-center overflow-hidden
                                  hover:scale-110 hover:rotate-5 active:scale-110 active:rotate-5 transition duration-200"
           >
@@ -59,7 +60,7 @@ export default function Navbar() {
               alt="icon"
               className="text-xs"
             />
-          </a>
+          </Link>
           <div className="hidden md:flex items-center h-full">
             {visibleNavItems.map((item) => (
               <NavLink
