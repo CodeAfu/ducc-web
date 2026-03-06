@@ -33,7 +33,7 @@ const buttonVariants = cva(
   }
 );
 
-interface MyButtonProps
+interface AnimatedButtonProps
   extends HTMLAttributes<HTMLButtonElement>,
   VariantProps<typeof buttonVariants> {
   buttonRef?: RefObject<HTMLButtonElement>;
@@ -50,7 +50,7 @@ export default function AnimatedButton({
   disabled = false,
   onClick,
   className,
-}: MyButtonProps) {
+}: AnimatedButtonProps) {
   const variants: Variants = {
     onHover: {
       scale: 1.05,

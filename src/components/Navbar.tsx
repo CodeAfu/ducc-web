@@ -30,7 +30,7 @@ export const navItems: MenuItem[] = [
   {
     href: "/tools/copium",
     label: "Copium",
-    protected: true,
+    protected: false,
     group: "tools",
   },
   {

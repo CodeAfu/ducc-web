@@ -26,7 +26,7 @@ export default function BingoSettingsSidebar() {
           />
           <motion.div
             id="bingo-settings-sidebar"
-            className="fixed h-[100dvh] right-0 bg-neutral-900/95 shadow sm:w-md w-64 z-1000"
+            className="fixed h-dvh right-0 overflow-y-scroll bg-neutral-900/95 shadow sm:w-md w-64 z-1000"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}

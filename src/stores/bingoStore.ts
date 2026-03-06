@@ -3,6 +3,8 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { BingoCellStates, BingoCellValue } from "~/types/bingo";
 
 type BingoStoreStates = {
+  title: string | null
+  description: string | null
   cellStates: BingoCellStates;
   selectedCell: keyof BingoCellStates | null;
   bgImage: string | null;
@@ -20,6 +22,8 @@ type BingoStoreActions = {
 
   setSelectedCell: (cellKey: keyof BingoCellStates | null) => void;
   resetCells: () => void;
+  setTitle: (title: string | null) => void;
+  setDescription: (description: string | null) => void;
   setBgImage: (image: string | null) => void;
   setIconImage: (image: string | null) => void;
   setBgIsIcon: (display: boolean) => void;
@@ -40,6 +44,8 @@ export const useBingoStore = create<BingoStore>()(
     (set, get) => ({
       // Initial state
       cellStates: createInitialCellStates(),
+      title: "",
+      description: "",
       bgImage: "",
       bgIsIcon: true,
       iconImage: "",
@@ -56,14 +62,16 @@ export const useBingoStore = create<BingoStore>()(
       },
       setSelectedCell: (cellKey) => set({ selectedCell: cellKey }),
       resetCells: () => set({ cellStates: createInitialCellStates() }),
+      setTitle: (title) => set({ title: title }),
+      setDescription: (description) => set({ description: description }),
       setBgImage: (display) => set({ bgImage: display }),
       setIconImage: (image) => set({ iconImage: image }),
       setBgIsIcon: (display) => set({ bgIsIcon: display }),
       setShowSidebar: (show) => set({ showSidebar: show }),
       randomizeCells: () => {
         const currentCells = get().cellStates;
-
         // Extract all values except cell13
+
         const entries = Object.entries(currentCells).filter(
           ([key]) => key !== "cell13",
         );
@@ -91,6 +99,8 @@ export const useBingoStore = create<BingoStore>()(
       name: "bingo-storage",
       storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({
+        title: state.title,
+        description: state.description,
         cellStates: state.cellStates,
         bgImage: state.bgImage,
         iconImage: state.iconImage,
@@ -116,6 +126,12 @@ export const useSetBgImage = () => useBingoStore((state) => state.setBgImage);
 export const useIconImage = () => useBingoStore((state) => state.iconImage);
 export const useSetIconImage = () =>
   useBingoStore((state) => state.setIconImage);
+
+export const useTitle = () => useBingoStore((state) => state.title)
+export const useSetTitle = () => useBingoStore((state) => state.setTitle)
+
+export const useDescription = () => useBingoStore((state) => state.description)
+export const useSetDescription = () => useBingoStore((state) => state.setDescription)
 
 export const useBgIsIcon = () => useBingoStore((state) => state.bgIsIcon);
 export const useSetBgIsIcon = () => useBingoStore((state) => state.setBgIsIcon);

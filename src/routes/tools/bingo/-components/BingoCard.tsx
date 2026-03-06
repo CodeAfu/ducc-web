@@ -20,6 +20,7 @@ import {
   useGetCell,
   useUpdateCell,
   useBingoStore,
+  useSetTitle,
 } from "~/stores/bingoStore";
 import LoadingSpinner from "~/components/LoadingSpinner";
 import { BingoCellStates } from "~/types/bingo";
@@ -28,6 +29,8 @@ import sayu from "~/assets/bingo-bg/sayu.png";
 import kazoo from "~/assets/bingo-bg/kazoo.png";
 import closeyu from "~/assets/bingo-bg/closeyu.webp";
 import closezuha from "~/assets/bingo-bg/closezuha.webp";
+import { useRouteContext } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 
 interface BingoCardProps extends HTMLAttributes<HTMLDivElement> { }
 
@@ -37,6 +40,18 @@ export default function BingoCard({
   ...props
 }: BingoCardProps) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { email } = useRouteContext({ from: "__root__" })
+
+  const { data, isLoading: isFetchingImage } = useQuery({
+    queryKey: ["api", "v3", "images"],
+    queryFn: async () => {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v3/images`);
+      if (!res.ok) throw new Error(await res.text());
+      const json = await res.json();
+      console.log(json);
+      return json;
+    }
+  })
 
   // const cellStates = useCellStates();
 
@@ -45,6 +60,7 @@ export default function BingoCard({
   const iconImage = useIconImage();
   const setIconImage = useSetIconImage();
   const bgIsIcon = useBgIsIcon();
+  const setTitle = useSetTitle();
   // const setBgIsIcon = useSetBgIsIcon();
 
   const imageUrl = closezuha;
@@ -75,53 +91,62 @@ export default function BingoCard({
   }
 
   return (
-    <div
-      id="bingo-card"
-      className={cn(
-        "relative bg-gray-100 text-black sm:p-8 p-4 rounded-lg w-full max-w-xl self-center",
-        className,
-      )}
-      {...props}
-    >
-      {/* Heading */}
-      <Row className="pb-2 sm:text-5xl text-4xl">
-        {Array.from("BINGO").map((char, index) => (
-          <Cell
-            key={index}
-            cellKey={`cell${index}`}
-            className="border-0 items-end h-fit font-bold select-none"
-          >
-            {char}
-          </Cell>
-        ))}
-      </Row>
+    <div className="flex flex-col">
+      <input
+        type="text"
+        maxLength={80}
+        className="sm:text-2xl text-lg mb-4 border-none outline-none"
+        placeholder="Bingo Card Name"
+        onInput={(e) => setTitle(e.currentTarget.value)}
+      />
+      <div
+        id="bingo-card"
+        className={cn(
+          "relative bg-gray-100 text-black sm:p-8 p-4 rounded-lg w-full max-w-xl",
+          className,
+        )}
+        {...props}
+      >
+        {/* Heading */}
+        <Row className="pb-2 sm:text-5xl text-4xl">
+          {Array.from("BINGO").map((char, index) => (
+            <Cell
+              key={index}
+              cellKey={`cell${index}`}
+              className="border-0 items-end h-fit font-bold select-none"
+            >
+              {char}
+            </Cell>
+          ))}
+        </Row>
 
-      <div className="relative">
-        {/* BG Image */}
-        <div
-          className="absolute opacity-10 inset-0 bg-contain bg-center bg-no-repeat rounded-lg z-0 pointer-events-none"
-          style={{ backgroundImage: `url(${displayImage})` }}
-        />
+        <div className="relative">
+          {/* BG Image */}
+          <div
+            className="absolute opacity-10 inset-0 bg-contain bg-center bg-no-repeat rounded-lg z-0 pointer-events-none"
+            style={{ backgroundImage: `url(${displayImage})` }}
+          />
 
-        {/* Cells */}
-        {[...Array(5)].map((_, rowIndex) => (
-          <Row key={`row${rowIndex}`}>
-            {[...Array(5)].map((_, cellIndex) => (
-              <Cell
-                key={`cell${rowIndex}-${cellIndex}`}
-                cellKey={getCellKey(rowIndex, cellIndex)}
-              >
-                {rowIndex === 2 && cellIndex === 2 ? (
-                  <div className="bg-white w-full h-full">
-                    <img src={iconImage || undefined} />
-                  </div>
-                ) : (
-                  <BingoInput cellKey={getCellKey(rowIndex, cellIndex)} />
-                )}
-              </Cell>
-            ))}
-          </Row>
-        ))}
+          {/* Cells */}
+          {[...Array(5)].map((_, rowIndex) => (
+            <Row key={`row${rowIndex}`}>
+              {[...Array(5)].map((_, cellIndex) => (
+                <Cell
+                  key={`cell${rowIndex}-${cellIndex}`}
+                  cellKey={getCellKey(rowIndex, cellIndex)}
+                >
+                  {rowIndex === 2 && cellIndex === 2 ? (
+                    <div className="bg-white w-full h-full">
+                      <img src={iconImage || undefined} />
+                    </div>
+                  ) : (
+                    <BingoInput cellKey={getCellKey(rowIndex, cellIndex)} />
+                  )}
+                </Cell>
+              ))}
+            </Row>
+          ))}
+        </div>
       </div>
     </div>
   );

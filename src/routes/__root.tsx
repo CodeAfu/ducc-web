@@ -17,7 +17,7 @@ import {
 } from '@tanstack/react-router'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary.js'
 import { NotFound } from '~/components/NotFound.js'
-import { QueryClient } from "@tanstack/react-query"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import appCss from '~/styles/app.css?url'
 import Navbar from '~/components/Navbar'
 import { dark } from "@clerk/themes"
@@ -31,6 +31,7 @@ const fetchClerkAuth = createServerFn({ method: 'GET' }).handler(async () => {
 
   return {
     userId,
+    email,
     isAuthorized,
   }
 })
@@ -38,12 +39,14 @@ const fetchClerkAuth = createServerFn({ method: 'GET' }).handler(async () => {
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
   userId?: string | null;
+  email?: string | null;
   isAuthorized: boolean;
 }>()({
   beforeLoad: async () => {
-    const { userId, isAuthorized } = await fetchClerkAuth()
+    const { userId, email, isAuthorized } = await fetchClerkAuth()
     return {
       userId,
+      email,
       isAuthorized,
     }
   },
@@ -104,33 +107,33 @@ export const Route = createRootRouteWithContext<{
 })
 
 function RootComponent() {
-  const { userId, isAuthorized } = Route.useRouteContext()
+  const { userId, isAuthorized, queryClient } = Route.useRouteContext()
   const currentPath = useRouterState({ select: (s) => s.location.pathname })
   return (
-    <ClerkProvider
-      appearance={{ baseTheme: dark }}
-    >
-      <RootDocument>
-        {!userId ? (
-          <div className="flex items-center justify-center w-full min-h-[50vh] p-8">
-            <SignIn routing="hash" forceRedirectUrl={currentPath} />
-          </div>
-        ) :
-          !isAuthorized ? (
-            <div className="flex flex-col items-center justify-center w-full min-h-[50vh] gap-4 p-8 text-center">
-              <h2 className="text-2xl font-bold text-destructive">Access Denied</h2>
-              <p className="text-muted-foreground">You are not authorized to view this content</p>
-              <SignOutButton>
-                <button className="px-4 py-2 mt-2 font-medium transition-colors rounded-md bg-primary text-primary-foreground hover:bg-primary/80">
-                  Sign Out
-                </button>
-              </SignOutButton>
+    <QueryClientProvider client={queryClient}>
+      <ClerkProvider appearance={{ baseTheme: dark }}>
+        <RootDocument>
+          {!userId ? (
+            <div className="flex items-center justify-center w-full min-h-[50vh] p-8">
+              <SignIn routing="hash" forceRedirectUrl={currentPath} />
             </div>
-          ) : (
-            <Outlet />
-          )}
-      </RootDocument>
-    </ClerkProvider>
+          ) :
+            !isAuthorized ? (
+              <div className="flex flex-col items-center justify-center w-full min-h-[50vh] gap-4 p-8 text-center">
+                <h2 className="text-2xl font-bold text-destructive">Access Denied</h2>
+                <p className="text-muted-foreground">You are not authorized to view this content</p>
+                <SignOutButton>
+                  <button className="px-4 py-2 mt-2 font-medium transition-colors rounded-md bg-primary text-primary-foreground hover:bg-primary/80">
+                    Sign Out
+                  </button>
+                </SignOutButton>
+              </div>
+            ) : (
+              <Outlet />
+            )}
+        </RootDocument>
+      </ClerkProvider>
+    </QueryClientProvider>
   )
 }
 

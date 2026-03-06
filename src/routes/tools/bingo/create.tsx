@@ -14,22 +14,21 @@ export const Route = createFileRoute("/tools/bingo/create")({
 function RouteComponent() {
   return (
     <Fragment>
-      <Container>
-        <div className="mt-4 flex flex-col gap-4">
+      <section className="flex flex-col gap-4 mt-4">
+        <div className="w-full max-w-7xl mx-auto gap-4">
           <Button className="w-fit" variant="link" size="sm" asChild>
             <Link to="/tools/bingo">
               <ArrowLeft className="" />
               Go Back
             </Link>
           </Button>
-          <div className="grid gap-2 xl:grid-cols-[260px_1fr_260px] grid-cols-1">
-            <BingoCard className="xl:col-start-2 place-self-center" />
-            {/* <BingoSettings /> */}
-          </div>
         </div>
-      </Container>
-      <BingoSettingsSidebarButton />
-      <BingoSettingsSidebar />
+        <div className="grid justify-center">
+          <BingoCard />
+        </div>
+        <BingoSettingsSidebarButton />
+        <BingoSettingsSidebar />
+      </section>
     </Fragment>
   );
 }
