@@ -15,12 +15,14 @@ const modalVariants = cva(
   {
     variants: {
       width: {
+        full: "max-w-[90vw]",
+        "7xl": "max-w-7xl",
+        "5xl": "max-w-5xl",
         "2xl": "max-w-2xl",
         default: "max-w-xl",
         md: "max-w-md",
         sm: "max-w-sm",
         xs: "max-w-xs",
-        full: "max-w-[90vw]",
       },
     },
     defaultVariants: {

@@ -57,11 +57,11 @@ export default function BingoCard({
     setIsLoading(false);
   }, [isFetchingImage]);
 
-  useEffect(() => {
-    if (!images) return;
-    setBgImage(`data:image/webp;base64,${images[0].img_data}`);
-    setIconImage(`data:image/webp;base64,${images[0].img_data}`);
-  }, [images]);
+  // useEffect(() => {
+  //   if (!images) return;
+  //   setBgImage(`data:image/webp;base64,${images[0].img_data}`);
+  //   setIconImage(`data:image/webp;base64,${images[0].img_data}`);
+  // }, [images]);
 
   if (isLoading) {
     return (
