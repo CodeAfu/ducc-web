@@ -31,16 +31,16 @@ const modalVariants = cva(
 
 interface MyModalProps
   extends HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof modalVariants> {
+  VariantProps<typeof modalVariants> {
   title?: string;
   isOpen: boolean;
-  onOpenChange: Dispatch<SetStateAction<boolean>>;
+  onClose: () => void;
 }
 
 export default function Modal({
   title,
   isOpen,
-  onOpenChange,
+  onClose,
   className,
   width,
   children,
@@ -68,7 +68,7 @@ export default function Modal({
           <motion.div
             id="modal-bg"
             className="fixed inset-0 bg-black/60 z-999"
-            onClick={() => onOpenChange(false)}
+            onClick={onClose}
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.8 }}
             exit={{ opacity: 0 }}
@@ -85,7 +85,7 @@ export default function Modal({
             <div className="flex items-center justify-start mb-4">
               <h1 className="flex-1 text-2xl mr-4 font-bold">{title}</h1>
               <motion.button
-                onClick={() => onOpenChange(false)}
+                onClick={onClose}
                 className="self-end size-8 p-0.5 text-xl text-card-foreground font-bold"
                 whileHover={{
                   scale: 1.1,

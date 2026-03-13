@@ -14,3 +14,15 @@ export async function tryCatch<T, E = Error>(promise: Promise<Result<T, E>>) {
     return { data: null, error: e as E };
   }
 }
+export function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const base64 = (reader.result as string).split(',')[1] // strip "data:image/webp;base64,"
+      resolve(base64)
+    }
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+

@@ -45,7 +45,7 @@ export default function LoginButton({
       </AnimatedButton>
       <Modal
         isOpen={isOpen}
-        onOpenChange={setIsOpen}
+        onClose={() => setIsOpen(false)}
         title="Sign In"
         width="sm"
       >

@@ -21,3 +21,18 @@ export const WINNING_PATTERNS = [
   ["cell1", "cell7", "cell13", "cell19", "cell25"],
   ["cell5", "cell9", "cell13", "cell17", "cell21"],
 ] as const;
+
+// API
+export interface BingoImage {
+  id: number;
+  img_data: string;
+  img_hash: string;
+  added_by: string;
+  filename: string;
+  fileext: string;
+  is_protected: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export type BingoImageResponse = BingoImage[]

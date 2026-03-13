@@ -1,6 +1,5 @@
 import {
   ComponentProps,
-  FormEvent,
   forwardRef,
   HTMLAttributes,
   ClipboardEvent,
@@ -12,70 +11,57 @@ import { cn } from "~/lib/utils";
 import {
   useBgImage,
   useSetBgImage,
-  // useCellStates,
   useIconImage,
   useSetIconImage,
   useBgIsIcon,
-  useSetBgIsIcon,
-  useGetCell,
   useUpdateCell,
   useBingoStore,
   useSetTitle,
+  useTitle,
 } from "~/stores/bingoStore";
 import LoadingSpinner from "~/components/LoadingSpinner";
-import { BingoCellStates } from "~/types/bingo";
+import { BingoCellStates, BingoImageResponse } from "~/types/bingo";
 import { getCellKey } from "~/utils/bingo";
-import sayu from "~/assets/bingo-bg/sayu.png";
-import kazoo from "~/assets/bingo-bg/kazoo.png";
-import closeyu from "~/assets/bingo-bg/closeyu.webp";
-import closezuha from "~/assets/bingo-bg/closezuha.webp";
-import { useRouteContext } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-
-interface BingoCardProps extends HTMLAttributes<HTMLDivElement> { }
 
 export default function BingoCard({
   children,
   className,
   ...props
-}: BingoCardProps) {
+}: HTMLAttributes<HTMLDivElement>) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const { email } = useRouteContext({ from: "__root__" })
 
-  const { data, isLoading: isFetchingImage } = useQuery({
+  const { data: images, isLoading: isFetchingImage } = useQuery({
     queryKey: ["api", "v3", "images"],
-    queryFn: async () => {
+    queryFn: async (): Promise<BingoImageResponse> => {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v3/images`);
       if (!res.ok) throw new Error(await res.text());
-      const json = await res.json();
-      console.log(json);
-      return json;
-    }
+      return await res.json();
+    },
+    staleTime: 1000 * 60 * 60,
+    gcTime: 1000 * 60 * 70,
   })
-
-  // const cellStates = useCellStates();
 
   const bgImage = useBgImage();
   const setBgImage = useSetBgImage();
   const iconImage = useIconImage();
   const setIconImage = useSetIconImage();
   const bgIsIcon = useBgIsIcon();
+  const title = useTitle();
   const setTitle = useSetTitle();
-  // const setBgIsIcon = useSetBgIsIcon();
 
-  const imageUrl = closezuha;
   const displayImage = bgIsIcon ? iconImage : bgImage;
 
   useEffect(() => {
-    try {
-      setBgImage(imageUrl);
-      setIconImage(imageUrl);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    if (isFetchingImage) return;
+    setIsLoading(false);
+  }, [isFetchingImage]);
+
+  useEffect(() => {
+    if (!images) return;
+    setBgImage(`data:image/webp;base64,${images[0].img_data}`);
+    setIconImage(`data:image/webp;base64,${images[0].img_data}`);
+  }, [images]);
 
   if (isLoading) {
     return (
@@ -91,18 +77,20 @@ export default function BingoCard({
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full max-w-xl">
       <input
         type="text"
         maxLength={80}
-        className="sm:text-2xl text-lg mb-4 border-none outline-none"
+        autoCapitalize="sentences"
+        className="sm:text-2xl text-lg mb-4 border-none outline-none text-primary-foreground"
         placeholder="Bingo Card Name"
+        defaultValue={title ?? ""}
         onInput={(e) => setTitle(e.currentTarget.value)}
       />
       <div
         id="bingo-card"
         className={cn(
-          "relative bg-gray-100 text-black sm:p-8 p-4 rounded-lg w-full max-w-xl",
+          "relative bg-gray-100 text-black sm:p-8 p-4 rounded-lg w-full",
           className,
         )}
         {...props}
@@ -120,7 +108,7 @@ export default function BingoCard({
           ))}
         </Row>
 
-        <div className="relative">
+        <div className="relative w-full">
           {/* BG Image */}
           <div
             className="absolute opacity-10 inset-0 bg-contain bg-center bg-no-repeat rounded-lg z-0 pointer-events-none"
@@ -136,7 +124,7 @@ export default function BingoCard({
                   cellKey={getCellKey(rowIndex, cellIndex)}
                 >
                   {rowIndex === 2 && cellIndex === 2 ? (
-                    <div className="bg-white w-full h-full">
+                    <div className="bg-white w-full h-full z-1">
                       <img src={iconImage || undefined} />
                     </div>
                   ) : (
@@ -278,7 +266,7 @@ const BingoInput = forwardRef<
     setFontSize(currentFontSize);
   };
 
-  const handleInput = (e: FormEvent<HTMLDivElement>) => {
+  const handleInput = (e: React.SyntheticEvent<HTMLDivElement>) => {
     const $div = e.currentTarget;
     const text = $div.textContent || "";
     setIsEmpty(text.trim().length === 0);
@@ -289,7 +277,11 @@ const BingoInput = forwardRef<
   const handlePaste = (e: ClipboardEvent<HTMLDivElement>) => {
     e.preventDefault();
     const text = e.clipboardData.getData("text/plain");
-    document.execCommand("insertText", false, text);
+    const selection = window.getSelection();
+    if (!selection?.rangeCount) return;
+    selection.deleteFromDocument();
+    selection.getRangeAt(0).insertNode(document.createTextNode(text));
+    selection.collapseToEnd();
     updateCell(cellKey, text);
     adjustContent();
   };

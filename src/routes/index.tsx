@@ -17,7 +17,7 @@ function Home() {
           <Button onClick={() => setIsOpen(true)}>Test Modal</Button>
         </div>
       </div>
-      <Modal isOpen={isOpen} title="Title" onOpenChange={setIsOpen}>
+      <Modal isOpen={isOpen} title="Title" onClose={() => setIsOpen(false)}>
         Test
       </Modal>
     </>

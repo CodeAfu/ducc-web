@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import Container from "~/components/Container";
 import BingoCard from "./-components/BingoCard";
 import { Button } from "~/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -23,7 +22,7 @@ function RouteComponent() {
             </Link>
           </Button>
         </div>
-        <div className="grid justify-center">
+        <div className="grid justify-items-center w-full px-2">
           <BingoCard />
         </div>
         <BingoSettingsSidebarButton />
