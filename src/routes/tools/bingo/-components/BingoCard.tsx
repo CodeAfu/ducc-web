@@ -124,7 +124,7 @@ export default function BingoCard({
                   cellKey={getCellKey(rowIndex, cellIndex)}
                 >
                   {rowIndex === 2 && cellIndex === 2 ? (
-                    <div className="bg-white w-full h-full flex items-center justify-center z-1">
+                    <div className="w-full h-full flex items-center justify-center z-1">
                       {iconImage ? (
                         <img src={iconImage || undefined} />
                       ) : (

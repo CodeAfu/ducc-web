@@ -208,8 +208,12 @@ export default function BingoSettingsSidebarContents() {
             <div className="flex flex-wrap gap-0.5">
               {isFetching || !images ? (
                 <React.Fragment>
-                  <Skeleton className="size-16" />
-                  <Skeleton className="size-16" />
+                  <Skeleton className="size-8" />
+                  <Skeleton className="size-8" />
+                  <Skeleton className="size-8" />
+                  <Skeleton className="size-8" />
+                  <Skeleton className="size-8" />
+                  <Skeleton className="size-8" />
                 </React.Fragment>
               ) : (
                 images.map((img, idx) => (

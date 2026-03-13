@@ -40,6 +40,7 @@ RUN mkdir -p /app/data && \
     chown -R nodejs:nodejs /app/data
 
 # Copy only necessary files
+COPY --from=builder --chown=nodejs:nodejs /app/package.json ./package.json
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 COPY --from=deps --chown=nodejs:nodejs /app/node_modules ./node_modules
 
