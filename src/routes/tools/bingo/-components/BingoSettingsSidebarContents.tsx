@@ -23,6 +23,7 @@ import { cn } from "~/lib/utils";
 import { ImageOff } from "lucide-react";
 import Modal from "~/components/Modal";
 import { useAuth } from "@clerk/tanstack-react-start";
+import toast from "react-hot-toast";
 
 interface PreviewImage {
   data: string;
@@ -38,15 +39,17 @@ export default function BingoSettingsSidebarContents() {
   const cellStates = useCellStates();
   const updateCell = useUpdateCell();
   const clearCells = useClearCells();
+  const randomizeCells = useRandomizeCells();
+
+  const setShowSidebar = useSetShowSidebar();
+
+  const title = useTitle();
+  const setTitle = useSetTitle();
+  const description = useDescription();
+  const setDescription = useSetDescription();
   const iconImage = useIconImage();
   const setIconImage = useSetIconImage();
   const setBgImage = useSetBgImage();
-  const randomizeCells = useRandomizeCells();
-  const description = useDescription();
-  const setDescription = useSetDescription();
-  const title = useTitle();
-  const setTitle = useSetTitle();
-  const setShowSidebar = useSetShowSidebar();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewImage, setPreviewImage] = useState<PreviewImage | null>(null);
@@ -64,7 +67,7 @@ export default function BingoSettingsSidebarContents() {
     gcTime: 1000 * 60 * 70,
   })
 
-  const { mutate: addImage, isPending } = useMutation({
+  const { mutateAsync: addImageAsync, isPending } = useMutation({
     mutationFn: async ({ imageBase64, filename, fileext }: {
       imageBase64: string,
       filename: string,
@@ -88,12 +91,17 @@ export default function BingoSettingsSidebarContents() {
       if (!res.ok) throw new Error(await res.text())
       return await res.json();
     },
+    // onMutate: () => {
+    //   return toast.loading("Uploading image...");
+    // },
     onError: (err) => {
       console.error(err)
+      // toast.error(err.message, { id: toastId })
     },
     onSuccess: (msg) => {
       queryClient.invalidateQueries({ queryKey: ["api", "v3", "images"] })
       console.log("Upload Success!", msg)
+      // toast.success("Image uploaded!", { id: toastId })
     }
   })
 
@@ -134,8 +142,9 @@ export default function BingoSettingsSidebarContents() {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      const filename = file.name.split(".")[0];
-      const fileext = file.name.split(".")[1];
+      const lastDot = file.name.lastIndexOf(".")
+      const filename = file.name.slice(0, lastDot);
+      const fileext = file.name.slice(lastDot + 1);
       setPreviewImage({
         data: reader.result as string,
         filename,
@@ -145,16 +154,24 @@ export default function BingoSettingsSidebarContents() {
     reader.readAsDataURL(file);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!previewImage) return;
-    const base64 = previewImage.data.split(",")[1];
-    addImage({
-      imageBase64: base64,
-      filename: previewImage.filename,
-      fileext: previewImage.fileext
-    })
     setPreviewImage(null)
     setShowSidebar(false);
+
+    const base64 = previewImage.data.split(",")[1];
+    await toast.promise(
+      addImageAsync({
+        imageBase64: base64,
+        filename: previewImage.filename,
+        fileext: previewImage.fileext
+      }),
+      {
+        loading: "Uploading...",
+        success: "Image uploaded!",
+        error: (err) => err.message,
+      }
+    )
   }
 
   return (
@@ -311,6 +328,8 @@ export default function BingoSettingsSidebarContents() {
           </div>
         </div>
       </div>
+
+      {/* Upload Image Preview */}
       <Modal className="bg-gray-900" width="7xl" isOpen={previewImage !== null} onClose={() => setPreviewImage(null)}>
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-center max-h-[80dvh] overflow-hidden rounded-lg">

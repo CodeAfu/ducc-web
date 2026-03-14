@@ -31,7 +31,7 @@ export default function BingoCard({
 }: HTMLAttributes<HTMLDivElement>) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const { data: images, isLoading: isFetchingImage } = useQuery({
+  const { isLoading: isFetchingImage } = useQuery({
     queryKey: ["api", "v3", "images"],
     queryFn: async (): Promise<BingoImageResponse> => {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v3/images`);
@@ -43,9 +43,7 @@ export default function BingoCard({
   })
 
   const bgImage = useBgImage();
-  const setBgImage = useSetBgImage();
   const iconImage = useIconImage();
-  const setIconImage = useSetIconImage();
   const bgIsIcon = useBgIsIcon();
   const title = useTitle();
   const setTitle = useSetTitle();
@@ -56,12 +54,6 @@ export default function BingoCard({
     if (isFetchingImage) return;
     setIsLoading(false);
   }, [isFetchingImage]);
-
-  // useEffect(() => {
-  //   if (!images) return;
-  //   setBgImage(`data:image/webp;base64,${images[0].img_data}`);
-  //   setIconImage(`data:image/webp;base64,${images[0].img_data}`);
-  // }, [images]);
 
   if (isLoading) {
     return (
@@ -126,7 +118,7 @@ export default function BingoCard({
                   {rowIndex === 2 && cellIndex === 2 ? (
                     <div className="w-full h-full flex items-center justify-center z-1">
                       {iconImage ? (
-                        <img src={iconImage || undefined} />
+                        <img src={iconImage || undefined} className="w-full h-full object-contain" />
                       ) : (
                         <p className="text-2xl">FREE</p>
                       )}

@@ -21,6 +21,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import appCss from '~/styles/app.css?url'
 import Navbar from '~/components/Navbar'
 import { dark } from "@clerk/themes"
+import { Toaster } from 'react-hot-toast';
 
 const fetchClerkAuth = createServerFn({ method: 'GET' }).handler(async () => {
   const { userId, sessionClaims } = await auth()
@@ -113,6 +114,30 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ClerkProvider appearance={{ baseTheme: dark }}>
         <RootDocument>
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              style: {
+                background: 'oklch(0.1787 0.0804 279.8522)',
+                color: 'oklch(0.9491 0 0)',
+                border: '1px solid oklch(0.2502 0.0303 281.1985)',
+                borderRadius: '0.5rem',
+                fontSize: '0.875rem',
+              },
+              success: {
+                iconTheme: {
+                  primary: 'oklch(0.6673 0.1682 154.0104)',
+                  secondary: 'oklch(0.1787 0.0804 279.8522)',
+                },
+              },
+              error: {
+                iconTheme: {
+                  primary: 'oklch(0.5037 0.1708 22.2389)',
+                  secondary: 'oklch(0.1787 0.0804 279.8522)',
+                },
+              },
+            }}
+          />
           {!userId ? (
             <div className="flex items-center justify-center w-full min-h-[50vh] p-8">
               <SignIn routing="hash" forceRedirectUrl={currentPath} />
