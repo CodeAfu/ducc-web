@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import BaseCard from "~/components/BaseCard";
 import Container from "~/components/Container";
-import BaseCard from "../../../components/BaseCard";
 import { Button } from "~/components/ui/button";
 
-export const Route = createFileRoute("/tools/bingo/")({
+export const Route = createFileRoute("/bingo/")({
   component: RouteComponent,
 });
 
@@ -15,7 +15,7 @@ function RouteComponent() {
           <h1 className="text-2xl md:text-3xl">Browse</h1>
         </div>
         <Button size="default" variant="outline" asChild>
-          <Link to="/tools/bingo/create">Create</Link>
+          <Link to="/bingo/create">Create</Link>
         </Button>
       </div>
 

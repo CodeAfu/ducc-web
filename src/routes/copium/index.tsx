@@ -3,7 +3,7 @@ import Container from "~/components/Container";
 import CopiumForm from "./-components/CopiumForm";
 import CopiumResults from "./-components/CopiumResults";
 
-export const Route = createFileRoute("/tools/copium/")({
+export const Route = createFileRoute("/copium/")({
   component: RouteComponent,
 });
 

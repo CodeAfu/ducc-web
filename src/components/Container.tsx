@@ -9,7 +9,7 @@ export default function Container({
   ...props
 }: ContainerProps) {
   return (
-    <div className={cn("md:max-w-7xl mx-auto w-full px-4", className)} {...props}>
+    <div className={cn("sm:px-4 px-2 mt-4 flex flex-col max-w-7xl mx-auto w-full", className)} {...props}>
       {children}
     </div>
   );

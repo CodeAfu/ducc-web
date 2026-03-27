@@ -16,19 +16,25 @@ export const navItems: MenuItem[] = [
     protected: false,
   },
   // {
-  //   href: "/tools/bg-remover",
+  //   href: "/bg-remover",
   //   label: "BG Remover",
   //   protected: false,
   //   group: "tools",
   // },
   {
-    href: "/tools/bingo",
+    href: "/bingo",
     label: "Bingo",
     protected: false,
     group: "tools",
   },
   {
-    href: "/tools/copium",
+    href: "/genshin-profiles",
+    label: "Genshin Profile",
+    protected: false,
+    group: "tools",
+  },
+  {
+    href: "/copium",
     label: "Copium",
     protected: false,
     group: "tools",

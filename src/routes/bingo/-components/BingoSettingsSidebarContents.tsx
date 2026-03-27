@@ -1,3 +1,4 @@
+import React from "react";
 import AnimatedButton from "~/components/AnimatedButton";
 import {
   useCellStates,
@@ -13,8 +14,7 @@ import {
   useTitle,
   useUpdateCell,
 } from "~/stores/bingoStore";
-import { useRef, useState } from "react";
-import React from "react";
+import { useState } from "react";
 import { BingoCellKey, BingoImageResponse } from "~/types/bingo";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouteContext } from "@tanstack/react-router";
@@ -51,9 +51,7 @@ export default function BingoSettingsSidebarContents() {
   const setIconImage = useSetIconImage();
   const setBgImage = useSetBgImage();
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewImage, setPreviewImage] = useState<PreviewImage | null>(null);
-
   const [imageIndex, setImageIndex] = useState(-1);
 
   const { data: images, isFetching } = useQuery({
@@ -91,17 +89,12 @@ export default function BingoSettingsSidebarContents() {
       if (!res.ok) throw new Error(await res.text())
       return await res.json();
     },
-    // onMutate: () => {
-    //   return toast.loading("Uploading image...");
-    // },
     onError: (err) => {
       console.error(err)
-      // toast.error(err.message, { id: toastId })
     },
     onSuccess: (msg) => {
       queryClient.invalidateQueries({ queryKey: ["api", "v3", "images"] })
       console.log("Upload Success!", msg)
-      // toast.success("Image uploaded!", { id: toastId })
     }
   })
 
@@ -157,10 +150,8 @@ export default function BingoSettingsSidebarContents() {
   const handleConfirm = async () => {
     if (!previewImage) return;
     setPreviewImage(null)
-    setShowSidebar(false);
-
     const base64 = previewImage.data.split(",")[1];
-    await toast.promise(
+    toast.promise(
       addImageAsync({
         imageBase64: base64,
         filename: previewImage.filename,
@@ -172,6 +163,7 @@ export default function BingoSettingsSidebarContents() {
         error: (err) => err.message,
       }
     )
+    // setShowSidebar(false);
   }
 
   return (
@@ -200,19 +192,16 @@ export default function BingoSettingsSidebarContents() {
               )}
             </h4>
             <div className="flex items-center gap-2">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="size-5 border text-lg rounded flex items-center justify-center text-primary-foreground border-primary-foreground
-            hover:cursor-pointer hover:text-primary hover:border-primary active:text-primary active:border-primary transition duration-200">
+              <label className="size-5 border text-lg rounded flex items-center justify-center text-primary-foreground border-primary-foreground
+                hover:cursor-pointer hover:text-primary hover:border-primary active:text-primary active:border-primary transition duration-200">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
                 +
-              </button>
+              </label>
               <button
                 onClick={resetImage}
                 className="size-5 border text-lg rounded flex items-center justify-center text-primary-foreground border-primary-foreground
@@ -263,7 +252,7 @@ export default function BingoSettingsSidebarContents() {
                     ?
                   </p>
                 ) : (
-                  <img src={iconImage} className="w-full h-full object-cover" />
+                  <img src={iconImage} className="w-full h-full object-contain" />
                 )}
               </div>
               <button

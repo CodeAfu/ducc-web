@@ -6,7 +6,7 @@ import { Fragment } from "react/jsx-runtime";
 import BingoSettingsSidebarButton from "./-components/BingoSettingsSidebarButton";
 import BingoSettingsSidebar from "./-components/BingoSettingsSidebar";
 
-export const Route = createFileRoute("/tools/bingo/create")({
+export const Route = createFileRoute("/bingo/create")({
   component: RouteComponent,
 });
 
@@ -16,9 +16,9 @@ function RouteComponent() {
       <section className="flex flex-col gap-4 mt-4">
         <div className="w-full max-w-7xl mx-auto gap-4">
           <Button className="w-fit" variant="link" size="sm" asChild>
-            <Link to="/tools/bingo">
-              <ArrowLeft className="" />
-              Go Back
+            <Link to="/bingo">
+              <ArrowLeft />
+              Back
             </Link>
           </Button>
         </div>

@@ -12,13 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TestsIndexRouteImport } from './routes/tests/index'
-import { Route as ToolsBgRemoverRouteImport } from './routes/tools/bg-remover'
+import { Route as GenshinProfilesIndexRouteImport } from './routes/genshin-profiles/index'
+import { Route as CopiumIndexRouteImport } from './routes/copium/index'
+import { Route as BingoIndexRouteImport } from './routes/bingo/index'
+import { Route as BgRemoverIndexRouteImport } from './routes/bg-remover/index'
+import { Route as GenshinProfilesIdRouteImport } from './routes/genshin-profiles/$id'
 import { Route as GamesSnekRouteImport } from './routes/games/snek'
+import { Route as BingoCreateRouteImport } from './routes/bingo/create'
 import { Route as AuthedPostsRouteImport } from './routes/_authed/posts'
-import { Route as ToolsCopiumIndexRouteImport } from './routes/tools/copium/index'
-import { Route as ToolsBingoIndexRouteImport } from './routes/tools/bingo/index'
 import { Route as AuthedPostsIndexRouteImport } from './routes/_authed/posts.index'
-import { Route as ToolsBingoCreateRouteImport } from './routes/tools/bingo/create'
 import { Route as AuthedProfileSplatRouteImport } from './routes/_authed/profile.$'
 import { Route as AuthedPostsPostIdRouteImport } from './routes/_authed/posts.$postId'
 
@@ -36,9 +38,29 @@ const TestsIndexRoute = TestsIndexRouteImport.update({
   path: '/tests/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ToolsBgRemoverRoute = ToolsBgRemoverRouteImport.update({
-  id: '/tools/bg-remover',
-  path: '/tools/bg-remover',
+const GenshinProfilesIndexRoute = GenshinProfilesIndexRouteImport.update({
+  id: '/genshin-profiles/',
+  path: '/genshin-profiles/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CopiumIndexRoute = CopiumIndexRouteImport.update({
+  id: '/copium/',
+  path: '/copium/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BingoIndexRoute = BingoIndexRouteImport.update({
+  id: '/bingo/',
+  path: '/bingo/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BgRemoverIndexRoute = BgRemoverIndexRouteImport.update({
+  id: '/bg-remover/',
+  path: '/bg-remover/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GenshinProfilesIdRoute = GenshinProfilesIdRouteImport.update({
+  id: '/genshin-profiles/$id',
+  path: '/genshin-profiles/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GamesSnekRoute = GamesSnekRouteImport.update({
@@ -46,30 +68,20 @@ const GamesSnekRoute = GamesSnekRouteImport.update({
   path: '/games/snek',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BingoCreateRoute = BingoCreateRouteImport.update({
+  id: '/bingo/create',
+  path: '/bingo/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthedPostsRoute = AuthedPostsRouteImport.update({
   id: '/posts',
   path: '/posts',
   getParentRoute: () => AuthedRoute,
 } as any)
-const ToolsCopiumIndexRoute = ToolsCopiumIndexRouteImport.update({
-  id: '/tools/copium/',
-  path: '/tools/copium/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ToolsBingoIndexRoute = ToolsBingoIndexRouteImport.update({
-  id: '/tools/bingo/',
-  path: '/tools/bingo/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthedPostsIndexRoute = AuthedPostsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthedPostsRoute,
-} as any)
-const ToolsBingoCreateRoute = ToolsBingoCreateRouteImport.update({
-  id: '/tools/bingo/create',
-  path: '/tools/bingo/create',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthedProfileSplatRoute = AuthedProfileSplatRouteImport.update({
   id: '/profile/$',
@@ -85,94 +97,108 @@ const AuthedPostsPostIdRoute = AuthedPostsPostIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/posts': typeof AuthedPostsRouteWithChildren
+  '/bingo/create': typeof BingoCreateRoute
   '/games/snek': typeof GamesSnekRoute
-  '/tools/bg-remover': typeof ToolsBgRemoverRoute
+  '/genshin-profiles/$id': typeof GenshinProfilesIdRoute
+  '/bg-remover/': typeof BgRemoverIndexRoute
+  '/bingo/': typeof BingoIndexRoute
+  '/copium/': typeof CopiumIndexRoute
+  '/genshin-profiles/': typeof GenshinProfilesIndexRoute
   '/tests/': typeof TestsIndexRoute
   '/posts/$postId': typeof AuthedPostsPostIdRoute
   '/profile/$': typeof AuthedProfileSplatRoute
-  '/tools/bingo/create': typeof ToolsBingoCreateRoute
   '/posts/': typeof AuthedPostsIndexRoute
-  '/tools/bingo/': typeof ToolsBingoIndexRoute
-  '/tools/copium/': typeof ToolsCopiumIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/bingo/create': typeof BingoCreateRoute
   '/games/snek': typeof GamesSnekRoute
-  '/tools/bg-remover': typeof ToolsBgRemoverRoute
+  '/genshin-profiles/$id': typeof GenshinProfilesIdRoute
+  '/bg-remover': typeof BgRemoverIndexRoute
+  '/bingo': typeof BingoIndexRoute
+  '/copium': typeof CopiumIndexRoute
+  '/genshin-profiles': typeof GenshinProfilesIndexRoute
   '/tests': typeof TestsIndexRoute
   '/posts/$postId': typeof AuthedPostsPostIdRoute
   '/profile/$': typeof AuthedProfileSplatRoute
-  '/tools/bingo/create': typeof ToolsBingoCreateRoute
   '/posts': typeof AuthedPostsIndexRoute
-  '/tools/bingo': typeof ToolsBingoIndexRoute
-  '/tools/copium': typeof ToolsCopiumIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authed': typeof AuthedRouteWithChildren
   '/_authed/posts': typeof AuthedPostsRouteWithChildren
+  '/bingo/create': typeof BingoCreateRoute
   '/games/snek': typeof GamesSnekRoute
-  '/tools/bg-remover': typeof ToolsBgRemoverRoute
+  '/genshin-profiles/$id': typeof GenshinProfilesIdRoute
+  '/bg-remover/': typeof BgRemoverIndexRoute
+  '/bingo/': typeof BingoIndexRoute
+  '/copium/': typeof CopiumIndexRoute
+  '/genshin-profiles/': typeof GenshinProfilesIndexRoute
   '/tests/': typeof TestsIndexRoute
   '/_authed/posts/$postId': typeof AuthedPostsPostIdRoute
   '/_authed/profile/$': typeof AuthedProfileSplatRoute
-  '/tools/bingo/create': typeof ToolsBingoCreateRoute
   '/_authed/posts/': typeof AuthedPostsIndexRoute
-  '/tools/bingo/': typeof ToolsBingoIndexRoute
-  '/tools/copium/': typeof ToolsCopiumIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/posts'
+    | '/bingo/create'
     | '/games/snek'
-    | '/tools/bg-remover'
+    | '/genshin-profiles/$id'
+    | '/bg-remover/'
+    | '/bingo/'
+    | '/copium/'
+    | '/genshin-profiles/'
     | '/tests/'
     | '/posts/$postId'
     | '/profile/$'
-    | '/tools/bingo/create'
     | '/posts/'
-    | '/tools/bingo/'
-    | '/tools/copium/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/bingo/create'
     | '/games/snek'
-    | '/tools/bg-remover'
+    | '/genshin-profiles/$id'
+    | '/bg-remover'
+    | '/bingo'
+    | '/copium'
+    | '/genshin-profiles'
     | '/tests'
     | '/posts/$postId'
     | '/profile/$'
-    | '/tools/bingo/create'
     | '/posts'
-    | '/tools/bingo'
-    | '/tools/copium'
   id:
     | '__root__'
     | '/'
     | '/_authed'
     | '/_authed/posts'
+    | '/bingo/create'
     | '/games/snek'
-    | '/tools/bg-remover'
+    | '/genshin-profiles/$id'
+    | '/bg-remover/'
+    | '/bingo/'
+    | '/copium/'
+    | '/genshin-profiles/'
     | '/tests/'
     | '/_authed/posts/$postId'
     | '/_authed/profile/$'
-    | '/tools/bingo/create'
     | '/_authed/posts/'
-    | '/tools/bingo/'
-    | '/tools/copium/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthedRoute: typeof AuthedRouteWithChildren
+  BingoCreateRoute: typeof BingoCreateRoute
   GamesSnekRoute: typeof GamesSnekRoute
-  ToolsBgRemoverRoute: typeof ToolsBgRemoverRoute
+  GenshinProfilesIdRoute: typeof GenshinProfilesIdRoute
+  BgRemoverIndexRoute: typeof BgRemoverIndexRoute
+  BingoIndexRoute: typeof BingoIndexRoute
+  CopiumIndexRoute: typeof CopiumIndexRoute
+  GenshinProfilesIndexRoute: typeof GenshinProfilesIndexRoute
   TestsIndexRoute: typeof TestsIndexRoute
-  ToolsBingoCreateRoute: typeof ToolsBingoCreateRoute
-  ToolsBingoIndexRoute: typeof ToolsBingoIndexRoute
-  ToolsCopiumIndexRoute: typeof ToolsCopiumIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -198,11 +224,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tools/bg-remover': {
-      id: '/tools/bg-remover'
-      path: '/tools/bg-remover'
-      fullPath: '/tools/bg-remover'
-      preLoaderRoute: typeof ToolsBgRemoverRouteImport
+    '/genshin-profiles/': {
+      id: '/genshin-profiles/'
+      path: '/genshin-profiles'
+      fullPath: '/genshin-profiles/'
+      preLoaderRoute: typeof GenshinProfilesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/copium/': {
+      id: '/copium/'
+      path: '/copium'
+      fullPath: '/copium/'
+      preLoaderRoute: typeof CopiumIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bingo/': {
+      id: '/bingo/'
+      path: '/bingo'
+      fullPath: '/bingo/'
+      preLoaderRoute: typeof BingoIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bg-remover/': {
+      id: '/bg-remover/'
+      path: '/bg-remover'
+      fullPath: '/bg-remover/'
+      preLoaderRoute: typeof BgRemoverIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/genshin-profiles/$id': {
+      id: '/genshin-profiles/$id'
+      path: '/genshin-profiles/$id'
+      fullPath: '/genshin-profiles/$id'
+      preLoaderRoute: typeof GenshinProfilesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/games/snek': {
@@ -212,6 +266,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GamesSnekRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bingo/create': {
+      id: '/bingo/create'
+      path: '/bingo/create'
+      fullPath: '/bingo/create'
+      preLoaderRoute: typeof BingoCreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authed/posts': {
       id: '/_authed/posts'
       path: '/posts'
@@ -219,33 +280,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedPostsRouteImport
       parentRoute: typeof AuthedRoute
     }
-    '/tools/copium/': {
-      id: '/tools/copium/'
-      path: '/tools/copium'
-      fullPath: '/tools/copium/'
-      preLoaderRoute: typeof ToolsCopiumIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tools/bingo/': {
-      id: '/tools/bingo/'
-      path: '/tools/bingo'
-      fullPath: '/tools/bingo/'
-      preLoaderRoute: typeof ToolsBingoIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authed/posts/': {
       id: '/_authed/posts/'
       path: '/'
       fullPath: '/posts/'
       preLoaderRoute: typeof AuthedPostsIndexRouteImport
       parentRoute: typeof AuthedPostsRoute
-    }
-    '/tools/bingo/create': {
-      id: '/tools/bingo/create'
-      path: '/tools/bingo/create'
-      fullPath: '/tools/bingo/create'
-      preLoaderRoute: typeof ToolsBingoCreateRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/_authed/profile/$': {
       id: '/_authed/profile/$'
@@ -294,12 +334,14 @@ const AuthedRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthedRoute: AuthedRouteWithChildren,
+  BingoCreateRoute: BingoCreateRoute,
   GamesSnekRoute: GamesSnekRoute,
-  ToolsBgRemoverRoute: ToolsBgRemoverRoute,
+  GenshinProfilesIdRoute: GenshinProfilesIdRoute,
+  BgRemoverIndexRoute: BgRemoverIndexRoute,
+  BingoIndexRoute: BingoIndexRoute,
+  CopiumIndexRoute: CopiumIndexRoute,
+  GenshinProfilesIndexRoute: GenshinProfilesIndexRoute,
   TestsIndexRoute: TestsIndexRoute,
-  ToolsBingoCreateRoute: ToolsBingoCreateRoute,
-  ToolsBingoIndexRoute: ToolsBingoIndexRoute,
-  ToolsCopiumIndexRoute: ToolsCopiumIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -36,7 +36,7 @@ const buttonVariants = cva(
 interface AnimatedButtonProps
   extends HTMLAttributes<HTMLButtonElement>,
   VariantProps<typeof buttonVariants> {
-  buttonRef?: RefObject<HTMLButtonElement>;
+  ref?: RefObject<HTMLButtonElement | null>;
   type?: "button" | "reset" | "submit";
   disabled?: boolean;
 }
@@ -45,7 +45,7 @@ export default function AnimatedButton({
   children,
   size,
   variant,
-  buttonRef,
+  ref,
   type,
   disabled = false,
   onClick,
@@ -70,7 +70,7 @@ export default function AnimatedButton({
 
   return (
     <motion.button
-      ref={buttonRef}
+      ref={ref}
       onClick={onClick}
       className={cn(buttonVariants({ className, size, variant }))}
       type={type}

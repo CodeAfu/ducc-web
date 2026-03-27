@@ -1,4 +1,4 @@
-import React, { use } from "react";
+import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import Container from "~/components/Container";
 import { Image as ImageIcon, ArrowRight, ArrowDown } from "lucide-react";
@@ -8,7 +8,7 @@ import { Button } from "~/components/ui/button";
 import Loading from "~/components/Loading";
 import transparentBg from "~/assets/transparent-pattern.png";
 
-export const Route = createFileRoute("/tools/bg-remover")({
+export const Route = createFileRoute("/bg-remover/")({
   component: RouteComponent,
 });
 
