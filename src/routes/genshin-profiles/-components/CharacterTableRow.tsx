@@ -112,7 +112,7 @@ export default function CharacterTableRow({ profileId, character, className, ...
               options={[20, 30, 40, 50, 60, 70, 80, 90, 100].reverse()}
               defaultValue={character.asc_level}
               onValueChange={(val) => handleFieldChange("asc_level", val)}
-              min={20}
+              min={1}
               max={100}
             />
           </div>

@@ -1,4 +1,4 @@
-import { Plus, Settings, Trash2 } from "lucide-react";
+import { Plus, Settings } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import AnimatedButton from "~/components/AnimatedButton";
 import { cn } from "~/lib/utils";
@@ -6,7 +6,6 @@ import { CharacterListResponse, CharacterResponse } from "../types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useAuth } from "@clerk/tanstack-react-start";
-import ElementCardInput from "./ElementCardInput";
 import CharacterTableRow from "./CharacterTableRow";
 
 interface CharacterTableProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -110,14 +109,11 @@ export default function CharacterTable({ profileId, allCharacters, profileCharac
           {profileCharacters
             .filter(c => c.element_name == element)
             .sort((a, b) => {
-              const starDiff = b.stars - a.stars;
-
+              const starDiff = Number(b.stars) - Number(a.stars);
               if (starDiff !== 0) return starDiff;
-
-              const nameA = a.display_name ?? a.name;
-              const nameB = b.display_name ?? b.name;
-
-              return nameA.localeCompare(nameB);
+              const nameA = (a.display_name ? a.display_name : a.name).toLowerCase();
+              const nameB = (b.display_name ? b.display_name : b.name).toLowerCase();
+              return nameA.localeCompare(nameB, undefined, { sensitivity: 'base' });
             })
             .map(c => (
               <CharacterTableRow key={c.char_id} profileId={profileId} character={c} />
