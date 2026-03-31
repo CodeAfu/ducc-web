@@ -1,7 +1,7 @@
 import { useAuth } from "@clerk/tanstack-react-start";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import React from "react";
+import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import z from "zod";
@@ -9,8 +9,15 @@ import AnimatedButton from "~/components/AnimatedButton";
 import Modal from "~/components/Modal";
 import { cn } from "~/lib/utils";
 
-const genshinCharacterSchema = z.object({
-  name: z.string().min(1, "Name is required").max(50, "Name is too long"),
+const createGenshinSchema = (existingChars: string[]) => z.object({
+  name: z.string()
+    .min(1, "Name is required")
+    .max(50, "Name is too long")
+    .refine(
+      (val) => !existingChars.some(c => c.toLowerCase() === val.toLowerCase()),
+      { message: "Character already exists in your list" }
+    ),
+  display_name: z.string().optional(),
   element_name: z.enum(["pyro", "hydro", "anemo", "electro", "dendro", "cryo", "geo"], {
     errorMap: () => ({ message: "Invalid or missing element" }),
   }),
@@ -19,7 +26,7 @@ const genshinCharacterSchema = z.object({
   notes: z.string().max(500, "Notes are too long").optional(),
 });
 
-type CreateGenshinCharacterValues = z.infer<typeof genshinCharacterSchema>;
+type CreateGenshinCharacterValues = z.infer<ReturnType<typeof createGenshinSchema>>;
 
 async function addCharacter(token: string, createCharacterPayload: CreateGenshinCharacterValues) {
   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v3/genshin/characters`, {
@@ -46,18 +53,25 @@ export interface AddCharacterModalProps {
 export default function AddCharacterModal({ characters, isOpen, setIsOpen }: AddCharacterModalProps) {
   const { getToken } = useAuth()
   const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const schema = React.useMemo(() => createGenshinSchema(characters), [characters]);
+
   const {
     register,
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<CreateGenshinCharacterValues>({
-    resolver: zodResolver(genshinCharacterSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       stars: 4,
     }
   });
+
+  const iconValue = watch("icon");
 
   const { mutateAsync: addCharacterMutation, isPending } = useMutation({
     mutationFn: async (payload: CreateGenshinCharacterValues) => {
@@ -95,6 +109,8 @@ export default function AddCharacterModal({ characters, isOpen, setIsOpen }: Add
       setValue("icon", reader.result as string, { shouldValidate: true });
     };
     reader.readAsDataURL(file);
+
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   return (
@@ -116,6 +132,15 @@ export default function AddCharacterModal({ characters, isOpen, setIsOpen }: Add
               className="border-2 rounded outline-none px-2 py-1 w-full"
             />
             {errors.name && <span className="text-red-500 text-xs">{errors.name.message}</span>}
+          </div>
+
+          <label className="text-sm mt-2">Display Name: <span className="text-destructive"></span></label>
+          <div className="flex flex-col gap-1">
+            <input
+              {...register("display_name")}
+              className="border-2 rounded outline-none px-2 py-1 w-full"
+            />
+            {errors.display_name && <span className="text-red-500 text-xs">{errors.display_name.message}</span>}
           </div>
 
           <label className="text-sm mt-2">Element: <span className="text-destructive">*</span></label>
@@ -149,13 +174,38 @@ export default function AddCharacterModal({ characters, isOpen, setIsOpen }: Add
           </div>
 
           <label className="text-sm mt-2">Icon:</label>
-          <div className="flex flex-col gap-1 w-full">
+          <div className="flex flex-col gap-2 w-full">
             <input
               type="file"
+              ref={fileInputRef}
               accept="image/*"
               onChange={handleImageUpload}
-              className="border-2 rounded outline-none px-2 py-1 w-full cursor-pointer file:cursor-pointer file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-accent file:text-accent-foreground"
+              className="hidden"
             />
+
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex-1 border-2 border-dashed rounded px-2 py-2 text-xs hover:bg-primary/50 transition duration-200"
+              >
+                {iconValue ? "Change Image" : "Select Character Icon"}
+              </button>
+
+              {iconValue && (
+                <div className="relative size-10 border rounded overflow-hidden bg-muted">
+                  <img src={iconValue} alt="Preview" className="object-cover size-full" />
+                  <button
+                    type="button"
+                    onClick={() => setValue("icon", undefined)}
+                    className="absolute top-0 right-0 bg-destructive text-white size-4 text-[10px] flex items-center justify-center"
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
+            </div>
+
             <input type="hidden" {...register("icon")} />
             {errors.icon && <span className="text-red-500 text-xs">{errors.icon.message}</span>}
           </div>

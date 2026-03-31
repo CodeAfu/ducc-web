@@ -3,12 +3,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { ArrowLeft } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import ElementCard from "./-components/ElementCard";
 import AuthGuard from "~/components/AuthGuard";
 import Skeleton from "~/components/Skeleton";
 import Container from "~/components/Container";
-import { CharacterListResponse, ProfileResponse } from "./types";
+import { CharacterListResponse, GenshinProfileStats, ProfileResponse } from "./types";
 import AnimatedButton from "~/components/AnimatedButton";
 import DeleteProfileModal from "./-components/DeleteProfileModal";
 import AddNotesModal from "./-components/AddNotesModal";
@@ -16,6 +16,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import AddCharacterModal from "./-components/AddCharacterModal";
 import CharacterTable from "./-components/CharacterTable";
+import LoadingSpinner from "~/components/LoadingSpinner";
 
 export const Route = createFileRoute("/genshin-profiles/$id")({
   component: GenshinProfilePage,
@@ -93,6 +94,24 @@ export default function GenshinProfilePage() {
       return charactersJson;
     },
     enabled: isAuthLoaded && isSignedIn
+  })
+
+  const { data: profileStats, isFetching: isFetchingStats } = useQuery({
+    queryKey: ["api", "v3", "genshin", "profiles", id, "stats"],
+    queryFn: async (): Promise<GenshinProfileStats> => {
+      const token = await getToken();
+      if (!token) throw new Error("Unauthorized");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v3/genshin/profiles/${id}/stats`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        }
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const json = await res.json();
+      console.log(`Profile ${id} stats`, json)
+      return json;
+    },
   })
 
   const { mutateAsync: updateProfileNameMutation } = useMutation({
@@ -186,16 +205,73 @@ export default function GenshinProfilePage() {
             </div>
             <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 sm:gap-3 gap-2">
               <ElementCard title="Traveler" bgColorClass="bg-card">Traveler</ElementCard>
-              <ElementCard title="Stats" bgColorClass="bg-card">Content</ElementCard>
-              <ElementCard title="Pyro" element="pyro" bgColorClass="bg-card">
-                <CharacterTable />
+              <ElementCard title="Stats" bgColorClass="bg-card">
+                {isFetchingStats ? (
+                  <div className="flex flex-col items-center justify-center">
+                    <LoadingSpinner />
+                  </div>
+                ) : (
+                  <div className="text-sm inline-flex gap-2 flex-wrap">
+                    <p className="px-2 py-1 bg-popover border rounded shadow">Total: {profileStats?.char_count}</p>
+                    <p className="px-2 py-1 bg-popover border rounded shadow">Pyro: {profileStats?.element_counts.find(e => e.element_name === "pyro")?.count ?? 0}</p>
+                    <p className="px-2 py-1 bg-popover border rounded shadow">Hydro: {profileStats?.element_counts.find(e => e.element_name === "hydro")?.count ?? 0}</p>
+                    <p className="px-2 py-1 bg-popover border rounded shadow">Electro: {profileStats?.element_counts.find(e => e.element_name === "electro")?.count ?? 0}</p>
+                    <p className="px-2 py-1 bg-popover border rounded shadow">Hydro: {profileStats?.element_counts.find(e => e.element_name === "hydro")?.count ?? 0}</p>
+                    <p className="px-2 py-1 bg-popover border rounded shadow">Anemo: {profileStats?.element_counts.find(e => e.element_name === "anemo")?.count ?? 0}</p>
+                    <p className="px-2 py-1 bg-popover border rounded shadow">Geo: {profileStats?.element_counts.find(e => e.element_name === "geo")?.count ?? 0}</p>
+                    <p className="px-2 py-1 bg-popover border rounded shadow">Dendro: {profileStats?.element_counts.find(e => e.element_name === "dendro")?.count ?? 0}</p>
+                  </div>
+                )}
               </ElementCard>
-              <ElementCard title="Hydro" element="hydro" bgColorClass="bg-card">Content</ElementCard>
-              <ElementCard title="Electro" element="electro" bgColorClass="bg-card">Content</ElementCard>
-              <ElementCard title="Cryo" element="cryo" bgColorClass="bg-card">Content</ElementCard>
-              <ElementCard title="Anemo" element="anemo" bgColorClass="bg-card">Content</ElementCard>
-              <ElementCard title="Geo" element="geo" bgColorClass="bg-card">Content</ElementCard>
-              <ElementCard title="Dendro" element="dendro" bgColorClass="bg-card">Content</ElementCard>
+              <ElementCard title="Pyro" element="pyro" bgColorClass="bg-card">
+                <CharacterTable
+                  profileId={id}
+                  allCharacters={charactersList || []}
+                  profileCharacters={profile?.characters || []}
+                  element="pyro" />
+              </ElementCard>
+              <ElementCard title="Hydro" element="hydro" bgColorClass="bg-card">
+                <CharacterTable
+                  profileId={id}
+                  allCharacters={charactersList || []}
+                  profileCharacters={profile?.characters || []}
+                  element="hydro" />
+              </ElementCard>
+              <ElementCard title="Electro" element="electro" bgColorClass="bg-card">
+                <CharacterTable
+                  profileId={id}
+                  allCharacters={charactersList || []}
+                  profileCharacters={profile?.characters || []}
+                  element="electro" />
+              </ElementCard>
+              <ElementCard title="Cryo" element="cryo" bgColorClass="bg-card">
+                <CharacterTable
+                  profileId={id}
+                  allCharacters={charactersList || []}
+                  profileCharacters={profile?.characters || []}
+                  element="cryo" />
+              </ElementCard>
+              <ElementCard title="Anemo" element="anemo" bgColorClass="bg-card">
+                <CharacterTable
+                  profileId={id}
+                  allCharacters={charactersList || []}
+                  profileCharacters={profile?.characters || []}
+                  element="anemo" />
+              </ElementCard>
+              <ElementCard title="Geo" element="geo" bgColorClass="bg-card">
+                <CharacterTable
+                  profileId={id}
+                  allCharacters={charactersList || []}
+                  profileCharacters={profile?.characters || []}
+                  element="geo" />
+              </ElementCard>
+              <ElementCard title="Dendro" element="dendro" bgColorClass="bg-card">
+                <CharacterTable
+                  profileId={id}
+                  allCharacters={charactersList || []}
+                  profileCharacters={profile?.characters || []}
+                  element="dendro" />
+              </ElementCard>
             </div>
           </section>
         </Suspense>

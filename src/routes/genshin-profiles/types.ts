@@ -26,7 +26,10 @@ export interface ElementResponse {
 export interface CharacterResponse {
   char_id: number;
   name: string;
+  display_name?: string;
   level: number;
+  asc_level: number;
+  stars: number;
   constellation: number;
   talent_na: number;
   talent_e: number;

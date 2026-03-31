@@ -36,7 +36,7 @@ export default function ElementCard({ title, element, bgColorClass, children, cl
       )}
       {...props}
     >
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-4">
         {element && iconUrl && (
           <img src={iconUrl} alt={element} className="size-8" />
         )}

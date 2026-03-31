@@ -36,7 +36,7 @@ const buttonVariants = cva(
 interface AnimatedButtonProps
   extends HTMLAttributes<HTMLButtonElement>,
   VariantProps<typeof buttonVariants> {
-  ref?: RefObject<HTMLButtonElement | null>;
+  ref?: React.Ref<HTMLButtonElement>;
   type?: "button" | "reset" | "submit";
   disabled?: boolean;
 }
