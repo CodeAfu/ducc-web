@@ -38,7 +38,7 @@ export default function CharacterTable({ profileId, allCharacters, profileCharac
 
   const { mutateAsync: addCharacterMutation } = useMutation({
     mutationFn: async (charName: string) => {
-      const token = getToken();
+      const token = await getToken();
       if (!token) throw new Error("Unauthorized")
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v3/genshin/profiles/${profileId}/${charName}`, {
         method: "POST",
@@ -52,6 +52,9 @@ export default function CharacterTable({ profileId, allCharacters, profileCharac
           talent_na: 1,
           talent_e: 1,
           talent_q: 1,
+          talent_na_boosted: false,
+          talent_e_boosted: false,
+          talent_q_boosted: false,
           notes: "",
         })
       })

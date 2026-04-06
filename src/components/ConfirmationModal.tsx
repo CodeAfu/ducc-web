@@ -13,7 +13,7 @@ export interface ConfirmationModalProps<T> extends React.HTMLAttributes<HTMLDivE
   onSuccessActions?: () => void;
   onErrorActions?: () => void;
   title?: string;
-  description?: string;
+  description?: React.ReactNode;
   loadingMessage?: string;
   successMessage?: string;
 }

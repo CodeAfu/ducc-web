@@ -173,7 +173,7 @@ export default function GenshinProfilePage() {
 
   return (
     <AuthGuard>
-      <Container>
+      <Container className="mb-16">
         <Button className="w-fit mb-6" variant="link" size="sm" asChild>
           <Link to="/genshin-profiles">
             <ArrowLeft />

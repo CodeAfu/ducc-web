@@ -34,6 +34,9 @@ export interface CharacterResponse {
   talent_na: number;
   talent_e: number;
   talent_q: number;
+  talent_na_boosted: boolean;
+  talent_e_boosted: boolean;
+  talent_q_boosted: boolean;
   char_notes: string;
   element_name: string;
   element_icon: string;

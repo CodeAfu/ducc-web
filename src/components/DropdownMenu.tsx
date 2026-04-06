@@ -66,7 +66,7 @@ export default function DropdownMenu({
       <div
         ref={dropdownRef}
         className={cn(
-          "absolute z-50 mt-2 min-w-[8rem] rounded-md bg-card border border-border shadow-lg",
+          "absolute z-50 mt-2 min-w-32 rounded-md bg-card border border-border shadow-lg",
           "origin-top-right transition-all duration-200 ease-out",
           isOpen
             ? "transform opacity-100 scale-100"
@@ -75,7 +75,12 @@ export default function DropdownMenu({
           className
         )}
       >
-        <div className="py-1" role="menu" aria-orientation="vertical">
+        <div
+          className="py-1"
+          role="menu"
+          aria-orientation="vertical"
+          onClick={() => setIsOpen(false)}
+        >
           {children}
         </div>
       </div>

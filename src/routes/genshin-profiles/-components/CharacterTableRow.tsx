@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
 import ElementCardInput from "./ElementCardInput";
-import { Trash2 } from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import { CharacterResponse } from "../types";
 import { useAuth } from "@clerk/tanstack-react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useDebouncedCallback } from "~/hooks/useDebounce";
 import ConfirmationModal from "~/components/ConfirmationModal";
+import DropdownMenu, { DropdownItem } from "~/components/DropdownMenu";
 
 interface CharacterTableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
   profileId: string;
@@ -56,6 +57,9 @@ export default function CharacterTableRow({ profileId, character, className, ...
           talent_na: updatedChar.talent_na,
           talent_e: updatedChar.talent_e,
           talent_q: updatedChar.talent_q,
+          talent_na_boosted: updatedChar.talent_na_boosted,
+          talent_e_boosted: updatedChar.talent_e_boosted,
+          talent_q_boosted: updatedChar.talent_q_boosted,
           notes: updatedChar.char_notes,
         })
       })
@@ -73,15 +77,29 @@ export default function CharacterTableRow({ profileId, character, className, ...
   const debouncedUpdate = useDebouncedCallback((updatedData: CharacterResponse) => {
     toast.promise(updateCharacterMutation(updatedData), {
       loading: `Saving ${updatedData.name}...`,
-      success: "Saved",
+      success: `Saved ${updatedData.name}`,
       error: (err) => err.message,
     });
   }, 2000);
+
+  const debouncedUpdateFast = useDebouncedCallback((updatedData: CharacterResponse) => {
+    toast.promise(updateCharacterMutation(updatedData), {
+      loading: `Saving ${updatedData.name}...`,
+      success: `Saved ${updatedData.name}`,
+      error: (err) => err.message,
+    });
+  }, 100);
 
   const handleFieldChange = (field: keyof CharacterResponse, value: number) => {
     const newState = { ...charState, [field]: value };
     setCharState(newState);
     debouncedUpdate(newState);
+  };
+
+  const handleBoostToggle = (field: "talent_na_boosted" | "talent_e_boosted" | "talent_q_boosted") => {
+    const newState = { ...charState, [field]: !charState[field] };
+    setCharState(newState);
+    debouncedUpdateFast(newState);
   };
 
   return (
@@ -128,9 +146,9 @@ export default function CharacterTableRow({ profileId, character, className, ...
         </td>
         <td className="px-1.5 py-2 text-center border-b">
           <ElementCardInput
-            className="text-primary"
+            className={cn("text-primary", character.talent_na_boosted && "text-cyan-400")}
             options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].reverse()}
-            defaultValue={character.talent_na}
+            defaultValue={character.talent_na_boosted ? character.talent_na + 3 : character.talent_na}
             onValueChange={(val) => handleFieldChange("talent_na", val)}
             min={1}
             max={15}
@@ -138,9 +156,9 @@ export default function CharacterTableRow({ profileId, character, className, ...
         </td>
         <td className="px-1.5 py-2 text-center border-b">
           <ElementCardInput
-            className="text-primary"
+            className={cn("text-primary", character.talent_e_boosted && "text-cyan-400")}
             options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].reverse()}
-            defaultValue={character.talent_e}
+            defaultValue={character.talent_e_boosted ? character.talent_e + 3 : character.talent_e}
             onValueChange={(val) => handleFieldChange("talent_e", val)}
             min={1}
             max={15}
@@ -148,21 +166,46 @@ export default function CharacterTableRow({ profileId, character, className, ...
         </td>
         <td className="px-1.5 py-2 text-center border-b">
           <ElementCardInput
-            className="text-primary"
+            className={cn("text-primary", character.talent_q_boosted && "text-cyan-400")}
             options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].reverse()}
-            defaultValue={character.talent_q}
+            defaultValue={character.talent_q_boosted ? character.talent_q + 3 : character.talent_q}
             onValueChange={(val) => handleFieldChange("talent_q", val)}
             min={1}
             max={15}
           />
         </td>
         <td className="px-1.5 py-2 text-center align-middle border-b">
-          <button
-            onClick={() => setIsConfirmDeleteModalOpen(true)}
-            className="block mx-auto hover:text-destructive active:ring-destructive hover:cursor-pointer active:scale-102 transition duration-200"
-          >
-            <Trash2 className="size-4" />
-          </button>
+          <DropdownMenu className="text-xs min-w-16"
+            align="right"
+            trigger={<div>
+              <Ellipsis className="size-4 h-full" />
+            </div>
+            }>
+            <DropdownItem
+              className="px-2 py-1 text-xs"
+              onClick={() => handleBoostToggle("talent_na_boosted")}
+            >
+              {charState.talent_na_boosted ? "−3 NA" : "+3 NA"}
+            </DropdownItem>
+            <DropdownItem
+              className="px-2 py-1 text-xs"
+              onClick={() => handleBoostToggle("talent_e_boosted")}
+            >
+              {charState.talent_e_boosted ? "−3 E" : "+3 E"}
+            </DropdownItem>
+            <DropdownItem
+              className="px-2 py-1 text-xs"
+              onClick={() => handleBoostToggle("talent_q_boosted")}
+            >
+              {charState.talent_q_boosted ? "−3 Q" : "+3 Q"}
+            </DropdownItem>
+            <DropdownItem
+              className="px-2 py-1 text-destructive text-xs"
+              onClick={() => setIsConfirmDeleteModalOpen(true)}
+            >
+              Delete
+            </DropdownItem>
+          </DropdownMenu>
         </td>
       </tr>
       <ConfirmationModal
@@ -172,7 +215,7 @@ export default function CharacterTableRow({ profileId, character, className, ...
         variables={character.char_id}
         invalidateQueryKeys={["api", "v3", "genshin", "profiles", profileId]}
         title={"Confirm Delete"}
-        description={`You are about to delete character '${character.name}'. Are you sure?`}
+        description={<>You are about to delete <span className="text-primary font-semibold">{character.name}</span>. Are you sure?</>}
         loadingMessage="Deleting..."
         successMessage={`${character.name} deleted successfully`}
       />
