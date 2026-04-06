@@ -12,10 +12,11 @@ interface CharacterTableProps extends React.HTMLAttributes<HTMLDivElement> {
   profileId: string;
   allCharacters: CharacterListResponse[]
   profileCharacters: CharacterResponse[]
-  element: string;
+  element?: string;
+  isTraveler?: boolean;
 }
 
-export default function CharacterTable({ profileId, allCharacters, profileCharacters, element, className, ...props }: CharacterTableProps) {
+export default function CharacterTable({ profileId, allCharacters, profileCharacters, element, isTraveler, className, ...props }: CharacterTableProps) {
   const { getToken } = useAuth();
   const queryClient = useQueryClient()
   const [name, setName] = useState("");
@@ -25,12 +26,12 @@ export default function CharacterTable({ profileId, allCharacters, profileCharac
 
   const filteredSuggestions = useMemo(() => {
     if (!name.trim()) return [];
-    return allCharacters.filter(
-      (c) =>
-        c.element_name === element &&
-        c.name.toLowerCase().includes(name.toLowerCase())
+    return allCharacters.filter(c =>
+      isTraveler
+        ? c.name.includes("Traveler") && c.name.toLowerCase().includes(name.toLowerCase())
+        : c.element_name === element && !c.name.includes("Traveler") && c.name.toLowerCase().includes(name.toLowerCase())
     );
-  }, [allCharacters, element, name]);
+  }, [allCharacters, element, name, isTraveler]);
 
   useEffect(() => {
     if (showInput) inputRef.current?.focus();
@@ -40,7 +41,7 @@ export default function CharacterTable({ profileId, allCharacters, profileCharac
     mutationFn: async (charName: string) => {
       const token = await getToken();
       if (!token) throw new Error("Unauthorized")
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v3/genshin/profiles/${profileId}/${charName}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v3/genshin/profiles/${profileId}/${encodeURIComponent(charName)}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +80,7 @@ export default function CharacterTable({ profileId, allCharacters, profileCharac
     const targetName = overrideName ?? name;
 
     const match = allCharacters
-      .filter(c => c.element_name === element)
+      .filter(c => isTraveler ? c.name.includes("Traveler") : c.element_name === element)
       .find((c) => c.name.toLowerCase() === targetName.trim().toLowerCase());
 
     if (match) {
@@ -105,12 +106,17 @@ export default function CharacterTable({ profileId, allCharacters, profileCharac
             <th className="px-1.5 py-2 border-l font-medium text-center">NA</th>
             <th className="px-1.5 py-2 border-l font-medium text-center">E</th>
             <th className="px-1.5 py-2 border-l font-medium text-center">Q</th>
-            <th className="px-1.5 py-2 border-l font-medium flex flex-col items-center justify-center text-center"><Settings className="size-4" /></th>
+            <th className="px-1.5 py-2 border-l font-medium flex flex-col items-center justify-center text-center">
+              <Settings className="size-4" />
+            </th>
           </tr>
         </thead>
         <tbody>
           {profileCharacters
-            .filter(c => c.element_name == element)
+            .filter(c => isTraveler
+              ? c.name.includes("Traveler")
+              : c.element_name === element && !c.name.includes("Traveler")
+            )
             .sort((a, b) => {
               const starDiff = Number(b.stars) - Number(a.stars);
               if (starDiff !== 0) return starDiff;

@@ -204,7 +204,6 @@ export default function GenshinProfilePage() {
 
             </div>
             <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 sm:gap-3 gap-2">
-              <ElementCard title="Traveler" bgColorClass="bg-card">Traveler</ElementCard>
               <ElementCard title="Stats" bgColorClass="bg-card">
                 {isFetchingStats ? (
                   <div className="flex flex-col items-center justify-center">
@@ -223,54 +222,69 @@ export default function GenshinProfilePage() {
                   </div>
                 )}
               </ElementCard>
+              <ElementCard title="Traveler" bgColorClass="bg-card">
+                <CharacterTable
+                  profileId={id}
+                  allCharacters={charactersList || []}
+                  profileCharacters={profile?.characters || []}
+                  isTraveler={true}
+                />
+              </ElementCard>
               <ElementCard title="Pyro" element="pyro" bgColorClass="bg-card">
                 <CharacterTable
                   profileId={id}
                   allCharacters={charactersList || []}
                   profileCharacters={profile?.characters || []}
-                  element="pyro" />
+                  element="pyro"
+                />
               </ElementCard>
               <ElementCard title="Hydro" element="hydro" bgColorClass="bg-card">
                 <CharacterTable
                   profileId={id}
                   allCharacters={charactersList || []}
                   profileCharacters={profile?.characters || []}
-                  element="hydro" />
+                  element="hydro"
+                />
               </ElementCard>
               <ElementCard title="Electro" element="electro" bgColorClass="bg-card">
                 <CharacterTable
                   profileId={id}
                   allCharacters={charactersList || []}
                   profileCharacters={profile?.characters || []}
-                  element="electro" />
+                  element="electro"
+                />
               </ElementCard>
               <ElementCard title="Cryo" element="cryo" bgColorClass="bg-card">
                 <CharacterTable
                   profileId={id}
                   allCharacters={charactersList || []}
                   profileCharacters={profile?.characters || []}
-                  element="cryo" />
+                  element="cryo"
+                />
               </ElementCard>
               <ElementCard title="Anemo" element="anemo" bgColorClass="bg-card">
                 <CharacterTable
                   profileId={id}
                   allCharacters={charactersList || []}
                   profileCharacters={profile?.characters || []}
-                  element="anemo" />
+                  element="anemo"
+                />
               </ElementCard>
               <ElementCard title="Geo" element="geo" bgColorClass="bg-card">
                 <CharacterTable
                   profileId={id}
                   allCharacters={charactersList || []}
                   profileCharacters={profile?.characters || []}
-                  element="geo" />
+                  element="geo"
+                />
               </ElementCard>
               <ElementCard title="Dendro" element="dendro" bgColorClass="bg-card">
                 <CharacterTable
                   profileId={id}
                   allCharacters={charactersList || []}
                   profileCharacters={profile?.characters || []}
-                  element="dendro" />
+                  element="dendro"
+                />
               </ElementCard>
             </div>
           </section>
