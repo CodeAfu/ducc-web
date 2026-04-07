@@ -177,9 +177,10 @@ export default function CharacterTableRow({ profileId, character, className, ...
         <td className="px-1.5 py-2 text-center align-middle border-b">
           <DropdownMenu className="text-xs min-w-16"
             align="right"
-            trigger={<div>
-              <Ellipsis className="size-4 h-full" />
-            </div>
+            trigger={
+              <div className="flex items-center justify-center size-6">
+                <Ellipsis className="size-4" />
+              </div>
             }>
             <DropdownItem
               className="px-2 py-1 text-xs"
