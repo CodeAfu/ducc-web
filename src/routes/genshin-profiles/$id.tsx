@@ -215,7 +215,7 @@ export default function GenshinProfilePage() {
                     <p className="px-2 py-1 bg-popover border rounded shadow">Pyro: {profileStats?.element_counts.find(e => e.element_name === "pyro")?.count ?? 0}</p>
                     <p className="px-2 py-1 bg-popover border rounded shadow">Hydro: {profileStats?.element_counts.find(e => e.element_name === "hydro")?.count ?? 0}</p>
                     <p className="px-2 py-1 bg-popover border rounded shadow">Electro: {profileStats?.element_counts.find(e => e.element_name === "electro")?.count ?? 0}</p>
-                    <p className="px-2 py-1 bg-popover border rounded shadow">Hydro: {profileStats?.element_counts.find(e => e.element_name === "hydro")?.count ?? 0}</p>
+                    <p className="px-2 py-1 bg-popover border rounded shadow">Cryo: {profileStats?.element_counts.find(e => e.element_name === "cryo")?.count ?? 0}</p>
                     <p className="px-2 py-1 bg-popover border rounded shadow">Anemo: {profileStats?.element_counts.find(e => e.element_name === "anemo")?.count ?? 0}</p>
                     <p className="px-2 py-1 bg-popover border rounded shadow">Geo: {profileStats?.element_counts.find(e => e.element_name === "geo")?.count ?? 0}</p>
                     <p className="px-2 py-1 bg-popover border rounded shadow">Dendro: {profileStats?.element_counts.find(e => e.element_name === "dendro")?.count ?? 0}</p>
