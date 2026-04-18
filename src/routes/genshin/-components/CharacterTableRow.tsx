@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
 import ElementCardInput from "./ElementCardInput";
 import { Ellipsis } from "lucide-react";
-import { CharacterResponse } from "../types";
+import { ProfileCharacterResponse } from "../types";
 import { useAuth } from "@clerk/tanstack-react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -12,7 +12,7 @@ import DropdownMenu, { DropdownItem } from "~/components/DropdownMenu";
 
 interface CharacterTableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
   profileId: string;
-  character: CharacterResponse;
+  character: ProfileCharacterResponse;
 }
 
 export default function CharacterTableRow({ profileId, character, className, ...props }: CharacterTableRowProps) {
@@ -40,7 +40,7 @@ export default function CharacterTableRow({ profileId, character, className, ...
   }
 
   const { mutateAsync: updateCharacterMutation } = useMutation({
-    mutationFn: async (updatedChar: CharacterResponse) => {
+    mutationFn: async (updatedChar: ProfileCharacterResponse) => {
       const token = await getToken();
       if (!token) throw new Error("Unauthorized");
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v3/genshin/profiles/${profileId}/${updatedChar.char_id}`, {
@@ -74,7 +74,7 @@ export default function CharacterTableRow({ profileId, character, className, ...
       console.error(err.message);
     }
   })
-  const debouncedUpdate = useDebouncedCallback((updatedData: CharacterResponse) => {
+  const debouncedUpdate = useDebouncedCallback((updatedData: ProfileCharacterResponse) => {
     toast.promise(updateCharacterMutation(updatedData), {
       loading: `Saving ${updatedData.name}...`,
       success: `Saved ${updatedData.name}`,
@@ -82,7 +82,7 @@ export default function CharacterTableRow({ profileId, character, className, ...
     });
   }, 2000);
 
-  const debouncedUpdateFast = useDebouncedCallback((updatedData: CharacterResponse) => {
+  const debouncedUpdateFast = useDebouncedCallback((updatedData: ProfileCharacterResponse) => {
     toast.promise(updateCharacterMutation(updatedData), {
       loading: `Saving ${updatedData.name}...`,
       success: `Saved ${updatedData.name}`,
@@ -90,7 +90,7 @@ export default function CharacterTableRow({ profileId, character, className, ...
     });
   }, 100);
 
-  const handleFieldChange = (field: keyof CharacterResponse, value: number) => {
+  const handleFieldChange = (field: keyof ProfileCharacterResponse, value: number) => {
     const newState = { ...charState, [field]: value };
     setCharState(newState);
     debouncedUpdate(newState);

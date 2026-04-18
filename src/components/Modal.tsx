@@ -1,8 +1,6 @@
 import {
-  Dispatch,
   Fragment,
   HTMLAttributes,
-  SetStateAction,
   useEffect,
 } from "react";
 import { createPortal } from "react-dom";

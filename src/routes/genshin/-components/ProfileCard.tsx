@@ -15,7 +15,7 @@ export default function ProfileCard({ profileId, children, className, ...props }
         "p-4",
         className
       )}
-      to="/genshin-profiles/$id"
+      to="/genshin/profiles/$id"
       params={{ id: profileId.toString() }}
       {...props}
     >

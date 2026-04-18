@@ -1,3 +1,15 @@
+export interface GenshinCharacter {
+  id: number,
+  name: string,
+  element_id: number,
+  stars: number,
+  icon?: string,
+  notes?: string,
+  created_at: Date,
+  updated_at: Date,
+  display_name?: string,
+  element_name: string,
+}
 
 export interface AllGenshinProfilesResponse {
   id: number;
@@ -23,7 +35,7 @@ export interface ElementResponse {
   icon_url: string;
 }
 
-export interface CharacterResponse {
+export interface ProfileCharacterResponse {
   char_id: number;
   name: string;
   display_name?: string;
@@ -46,7 +58,7 @@ export interface ProfileResponse {
   id: number;
   name: string;
   notes: string;
-  characters: CharacterResponse[];
+  characters: ProfileCharacterResponse[];
 }
 
 export interface CharacterListResponse {

@@ -17,8 +17,9 @@ import toast from "react-hot-toast";
 import AddCharacterModal from "./-components/AddCharacterModal";
 import CharacterTable from "./-components/CharacterTable";
 import LoadingSpinner from "~/components/LoadingSpinner";
+import CharacterViewModal from "./-components/CharacterViewModal";
 
-export const Route = createFileRoute("/genshin-profiles/$id")({
+export const Route = createFileRoute("/genshin/profiles/$id")({
   component: GenshinProfilePage,
 })
 
@@ -68,9 +69,10 @@ export default function GenshinProfilePage() {
   const queryClient = useQueryClient();
 
   const profileNameRef = useRef<HTMLInputElement | null>(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false)
-  const [isAddCharacterModalOpen, setIsAddCharacterModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
+  const [isCharacterViewModalOpen, setIsCharacterViewModalOpen] = useState(false);
+  const [isAddCharacterModalOpen, setIsAddCharacterModalOpen] = useState(false);
 
   const { data: profile, isLoading, isError, error } = useQuery({
     queryKey: ["api", "v3", "genshin", "profiles", id, "characters"],
@@ -175,7 +177,7 @@ export default function GenshinProfilePage() {
     <AuthGuard>
       <Container className="mb-16">
         <Button className="w-fit mb-6" variant="link" size="sm" asChild>
-          <Link to="/genshin-profiles">
+          <Link to="/genshin">
             <ArrowLeft />
             Back
           </Link>
@@ -194,8 +196,11 @@ export default function GenshinProfilePage() {
                 <AnimatedButton variant="destructive" onClick={() => setIsDeleteModalOpen(true)}>
                   Delete
                 </AnimatedButton>
-                <AnimatedButton variant="secondary" onClick={() => setIsAddCharacterModalOpen(true)}>
+                <AnimatedButton variant="primary" onClick={() => setIsAddCharacterModalOpen(true)}>
                   Add Character
+                </AnimatedButton>
+                <AnimatedButton variant="primary" onClick={() => setIsCharacterViewModalOpen(true)}>
+                  All Characters
                 </AnimatedButton>
                 <AnimatedButton variant="outline" onClick={() => setIsNotesModalOpen(true)}>
                   Add Note
@@ -295,6 +300,7 @@ export default function GenshinProfilePage() {
           <AddNotesModal id={id} notes={profile.notes} isOpen={isNotesModalOpen} setIsOpen={setIsNotesModalOpen} />
           <AddCharacterModal characters={charactersList?.map((char) => char.name) ?? []} isOpen={isAddCharacterModalOpen} setIsOpen={setIsAddCharacterModalOpen} />
           <DeleteProfileModal id={id} isOpen={isDeleteModalOpen} setIsOpen={setIsDeleteModalOpen} />
+          <CharacterViewModal isOpen={isCharacterViewModalOpen} setIsOpen={setIsCharacterViewModalOpen} />
         </React.Fragment>
       )}
     </AuthGuard>

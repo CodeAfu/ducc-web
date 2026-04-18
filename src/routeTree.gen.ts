@@ -12,15 +12,16 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TestsIndexRouteImport } from './routes/tests/index'
-import { Route as GenshinProfilesIndexRouteImport } from './routes/genshin-profiles/index'
+import { Route as GenshinIndexRouteImport } from './routes/genshin/index'
 import { Route as CopiumIndexRouteImport } from './routes/copium/index'
 import { Route as BingoIndexRouteImport } from './routes/bingo/index'
 import { Route as BgRemoverIndexRouteImport } from './routes/bg-remover/index'
-import { Route as GenshinProfilesIdRouteImport } from './routes/genshin-profiles/$id'
 import { Route as GamesSnekRouteImport } from './routes/games/snek'
 import { Route as BingoCreateRouteImport } from './routes/bingo/create'
 import { Route as AuthedPostsRouteImport } from './routes/_authed/posts'
 import { Route as AuthedPostsIndexRouteImport } from './routes/_authed/posts.index'
+import { Route as GenshinProfilesIdRouteImport } from './routes/genshin/profiles.$id'
+import { Route as GenshinCharactersIdRouteImport } from './routes/genshin/characters.$id'
 import { Route as AuthedProfileSplatRouteImport } from './routes/_authed/profile.$'
 import { Route as AuthedPostsPostIdRouteImport } from './routes/_authed/posts.$postId'
 
@@ -38,9 +39,9 @@ const TestsIndexRoute = TestsIndexRouteImport.update({
   path: '/tests/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GenshinProfilesIndexRoute = GenshinProfilesIndexRouteImport.update({
-  id: '/genshin-profiles/',
-  path: '/genshin-profiles/',
+const GenshinIndexRoute = GenshinIndexRouteImport.update({
+  id: '/genshin/',
+  path: '/genshin/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CopiumIndexRoute = CopiumIndexRouteImport.update({
@@ -56,11 +57,6 @@ const BingoIndexRoute = BingoIndexRouteImport.update({
 const BgRemoverIndexRoute = BgRemoverIndexRouteImport.update({
   id: '/bg-remover/',
   path: '/bg-remover/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GenshinProfilesIdRoute = GenshinProfilesIdRouteImport.update({
-  id: '/genshin-profiles/$id',
-  path: '/genshin-profiles/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GamesSnekRoute = GamesSnekRouteImport.update({
@@ -83,6 +79,16 @@ const AuthedPostsIndexRoute = AuthedPostsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthedPostsRoute,
 } as any)
+const GenshinProfilesIdRoute = GenshinProfilesIdRouteImport.update({
+  id: '/genshin/profiles/$id',
+  path: '/genshin/profiles/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GenshinCharactersIdRoute = GenshinCharactersIdRouteImport.update({
+  id: '/genshin/characters/$id',
+  path: '/genshin/characters/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthedProfileSplatRoute = AuthedProfileSplatRouteImport.update({
   id: '/profile/$',
   path: '/profile/$',
@@ -99,28 +105,30 @@ export interface FileRoutesByFullPath {
   '/posts': typeof AuthedPostsRouteWithChildren
   '/bingo/create': typeof BingoCreateRoute
   '/games/snek': typeof GamesSnekRoute
-  '/genshin-profiles/$id': typeof GenshinProfilesIdRoute
   '/bg-remover/': typeof BgRemoverIndexRoute
   '/bingo/': typeof BingoIndexRoute
   '/copium/': typeof CopiumIndexRoute
-  '/genshin-profiles/': typeof GenshinProfilesIndexRoute
+  '/genshin/': typeof GenshinIndexRoute
   '/tests/': typeof TestsIndexRoute
   '/posts/$postId': typeof AuthedPostsPostIdRoute
   '/profile/$': typeof AuthedProfileSplatRoute
+  '/genshin/characters/$id': typeof GenshinCharactersIdRoute
+  '/genshin/profiles/$id': typeof GenshinProfilesIdRoute
   '/posts/': typeof AuthedPostsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bingo/create': typeof BingoCreateRoute
   '/games/snek': typeof GamesSnekRoute
-  '/genshin-profiles/$id': typeof GenshinProfilesIdRoute
   '/bg-remover': typeof BgRemoverIndexRoute
   '/bingo': typeof BingoIndexRoute
   '/copium': typeof CopiumIndexRoute
-  '/genshin-profiles': typeof GenshinProfilesIndexRoute
+  '/genshin': typeof GenshinIndexRoute
   '/tests': typeof TestsIndexRoute
   '/posts/$postId': typeof AuthedPostsPostIdRoute
   '/profile/$': typeof AuthedProfileSplatRoute
+  '/genshin/characters/$id': typeof GenshinCharactersIdRoute
+  '/genshin/profiles/$id': typeof GenshinProfilesIdRoute
   '/posts': typeof AuthedPostsIndexRoute
 }
 export interface FileRoutesById {
@@ -130,14 +138,15 @@ export interface FileRoutesById {
   '/_authed/posts': typeof AuthedPostsRouteWithChildren
   '/bingo/create': typeof BingoCreateRoute
   '/games/snek': typeof GamesSnekRoute
-  '/genshin-profiles/$id': typeof GenshinProfilesIdRoute
   '/bg-remover/': typeof BgRemoverIndexRoute
   '/bingo/': typeof BingoIndexRoute
   '/copium/': typeof CopiumIndexRoute
-  '/genshin-profiles/': typeof GenshinProfilesIndexRoute
+  '/genshin/': typeof GenshinIndexRoute
   '/tests/': typeof TestsIndexRoute
   '/_authed/posts/$postId': typeof AuthedPostsPostIdRoute
   '/_authed/profile/$': typeof AuthedProfileSplatRoute
+  '/genshin/characters/$id': typeof GenshinCharactersIdRoute
+  '/genshin/profiles/$id': typeof GenshinProfilesIdRoute
   '/_authed/posts/': typeof AuthedPostsIndexRoute
 }
 export interface FileRouteTypes {
@@ -147,28 +156,30 @@ export interface FileRouteTypes {
     | '/posts'
     | '/bingo/create'
     | '/games/snek'
-    | '/genshin-profiles/$id'
     | '/bg-remover/'
     | '/bingo/'
     | '/copium/'
-    | '/genshin-profiles/'
+    | '/genshin/'
     | '/tests/'
     | '/posts/$postId'
     | '/profile/$'
+    | '/genshin/characters/$id'
+    | '/genshin/profiles/$id'
     | '/posts/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/bingo/create'
     | '/games/snek'
-    | '/genshin-profiles/$id'
     | '/bg-remover'
     | '/bingo'
     | '/copium'
-    | '/genshin-profiles'
+    | '/genshin'
     | '/tests'
     | '/posts/$postId'
     | '/profile/$'
+    | '/genshin/characters/$id'
+    | '/genshin/profiles/$id'
     | '/posts'
   id:
     | '__root__'
@@ -177,14 +188,15 @@ export interface FileRouteTypes {
     | '/_authed/posts'
     | '/bingo/create'
     | '/games/snek'
-    | '/genshin-profiles/$id'
     | '/bg-remover/'
     | '/bingo/'
     | '/copium/'
-    | '/genshin-profiles/'
+    | '/genshin/'
     | '/tests/'
     | '/_authed/posts/$postId'
     | '/_authed/profile/$'
+    | '/genshin/characters/$id'
+    | '/genshin/profiles/$id'
     | '/_authed/posts/'
   fileRoutesById: FileRoutesById
 }
@@ -193,12 +205,13 @@ export interface RootRouteChildren {
   AuthedRoute: typeof AuthedRouteWithChildren
   BingoCreateRoute: typeof BingoCreateRoute
   GamesSnekRoute: typeof GamesSnekRoute
-  GenshinProfilesIdRoute: typeof GenshinProfilesIdRoute
   BgRemoverIndexRoute: typeof BgRemoverIndexRoute
   BingoIndexRoute: typeof BingoIndexRoute
   CopiumIndexRoute: typeof CopiumIndexRoute
-  GenshinProfilesIndexRoute: typeof GenshinProfilesIndexRoute
+  GenshinIndexRoute: typeof GenshinIndexRoute
   TestsIndexRoute: typeof TestsIndexRoute
+  GenshinCharactersIdRoute: typeof GenshinCharactersIdRoute
+  GenshinProfilesIdRoute: typeof GenshinProfilesIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -224,11 +237,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/genshin-profiles/': {
-      id: '/genshin-profiles/'
-      path: '/genshin-profiles'
-      fullPath: '/genshin-profiles/'
-      preLoaderRoute: typeof GenshinProfilesIndexRouteImport
+    '/genshin/': {
+      id: '/genshin/'
+      path: '/genshin'
+      fullPath: '/genshin/'
+      preLoaderRoute: typeof GenshinIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/copium/': {
@@ -250,13 +263,6 @@ declare module '@tanstack/react-router' {
       path: '/bg-remover'
       fullPath: '/bg-remover/'
       preLoaderRoute: typeof BgRemoverIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/genshin-profiles/$id': {
-      id: '/genshin-profiles/$id'
-      path: '/genshin-profiles/$id'
-      fullPath: '/genshin-profiles/$id'
-      preLoaderRoute: typeof GenshinProfilesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/games/snek': {
@@ -286,6 +292,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/posts/'
       preLoaderRoute: typeof AuthedPostsIndexRouteImport
       parentRoute: typeof AuthedPostsRoute
+    }
+    '/genshin/profiles/$id': {
+      id: '/genshin/profiles/$id'
+      path: '/genshin/profiles/$id'
+      fullPath: '/genshin/profiles/$id'
+      preLoaderRoute: typeof GenshinProfilesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/genshin/characters/$id': {
+      id: '/genshin/characters/$id'
+      path: '/genshin/characters/$id'
+      fullPath: '/genshin/characters/$id'
+      preLoaderRoute: typeof GenshinCharactersIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authed/profile/$': {
       id: '/_authed/profile/$'
@@ -336,12 +356,13 @@ const rootRouteChildren: RootRouteChildren = {
   AuthedRoute: AuthedRouteWithChildren,
   BingoCreateRoute: BingoCreateRoute,
   GamesSnekRoute: GamesSnekRoute,
-  GenshinProfilesIdRoute: GenshinProfilesIdRoute,
   BgRemoverIndexRoute: BgRemoverIndexRoute,
   BingoIndexRoute: BingoIndexRoute,
   CopiumIndexRoute: CopiumIndexRoute,
-  GenshinProfilesIndexRoute: GenshinProfilesIndexRoute,
+  GenshinIndexRoute: GenshinIndexRoute,
   TestsIndexRoute: TestsIndexRoute,
+  GenshinCharactersIdRoute: GenshinCharactersIdRoute,
+  GenshinProfilesIdRoute: GenshinProfilesIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

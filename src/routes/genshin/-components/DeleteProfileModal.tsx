@@ -39,7 +39,7 @@ export default function DeleteProfileModal({ id, isOpen, setIsOpen }: DeleteProf
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["api", "v3", "genshin", "profiles"] })
-      router.navigate({ to: "/genshin-profiles" })
+      router.navigate({ to: "/genshin" })
     },
     onError: (err) => {
       console.error(err)

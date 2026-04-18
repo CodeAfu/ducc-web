@@ -2,7 +2,7 @@ import { Plus, Settings } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import AnimatedButton from "~/components/AnimatedButton";
 import { cn } from "~/lib/utils";
-import { CharacterListResponse, CharacterResponse } from "../types";
+import { CharacterListResponse, ProfileCharacterResponse } from "../types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useAuth } from "@clerk/tanstack-react-start";
@@ -11,7 +11,7 @@ import CharacterTableRow from "./CharacterTableRow";
 interface CharacterTableProps extends React.HTMLAttributes<HTMLDivElement> {
   profileId: string;
   allCharacters: CharacterListResponse[]
-  profileCharacters: CharacterResponse[]
+  profileCharacters: ProfileCharacterResponse[]
   element?: string;
   isTraveler?: boolean;
 }

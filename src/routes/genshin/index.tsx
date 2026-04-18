@@ -8,8 +8,9 @@ import CreateProfileModal from './-components/CreateProfileModal';
 import AnimatedButton from '~/components/AnimatedButton';
 import LoadingSpinner from '~/components/LoadingSpinner';
 import AuthGuard from '~/components/AuthGuard';
+import CharacterViewModal from './-components/CharacterViewModal';
 
-export const Route = createFileRoute('/genshin-profiles/')({
+export const Route = createFileRoute('/genshin/')({
   component: GenshinProfileIdPage,
   pendingComponent: () => (
     <div className="flex justify-center items-center w-full min-h-[50vh]">
@@ -17,7 +18,7 @@ export const Route = createFileRoute('/genshin-profiles/')({
     </div>
   ),
   errorComponent: ({ error }) => (
-    <div className="text-center mt-20 text-red-500 font-medium">
+    <div className="text-center mt-20 text-destructive font-medium">
       Error: {error instanceof Error ? error.message : "An unknown error occurred"}
     </div>
   ),
@@ -25,8 +26,9 @@ export const Route = createFileRoute('/genshin-profiles/')({
 
 
 function GenshinProfileIdPage() {
-  const { getToken } = useAuth()
+  const { getToken, } = useAuth()
   const [isOpen, setIsOpen] = useState(false);
+  const [isViewCharactersModalOpen, setIsViewCharactersModalOpen] = useState(false);
 
   const { data: profiles } = useSuspenseQuery({
     queryKey: ["api", "v3", "genshin", "profiles"],
@@ -69,9 +71,14 @@ function GenshinProfileIdPage() {
       <div className="md:mt-12 mt-4 flex flex-col mx-auto max-w-7xl w-full md:px-8 sm:px-4 px-2">
         <div className="flex items-center justify-between">
           <h1 className="font-semibold md:text-3xl text-2xl mb-4">Profiles</h1>
-          <AnimatedButton variant="outline" onClick={() => setIsOpen(true)}>
-            Create
-          </AnimatedButton>
+          <div className="flex items-center justify-center gap-2">
+            <AnimatedButton variant="outline" onClick={() => setIsOpen(true)}>
+              Create
+            </AnimatedButton>
+            <AnimatedButton variant="primary" onClick={() => setIsViewCharactersModalOpen(true)}>
+              All Characters
+            </AnimatedButton>
+          </div>
         </div>
         <div className="grid md:grid-cols-2 md:gap-4 gap-2">
           {profiles.length === 0 ? (
@@ -85,7 +92,7 @@ function GenshinProfileIdPage() {
                 <ProfileCard key={profile.id} profileId={profile.id}>
                   <p className="text-foreground font-bold tracking-tighter text-lg truncate text-nowrap">{profile.name}</p>
                   <div className="mt-2 text-sm">
-                    <p>Total Chars: {" "}
+                    <p>Total Chars:{" "}
                       <span>{stats?.char_count}</span>
                     </p>
                   </div>
@@ -99,6 +106,7 @@ function GenshinProfileIdPage() {
         </div>
       </div>
       <CreateProfileModal title="Create Profile" isOpen={isOpen} setIsOpen={setIsOpen} />
-    </AuthGuard>
+      <CharacterViewModal isOpen={isViewCharactersModalOpen} setIsOpen={setIsViewCharactersModalOpen} />
+    </AuthGuard >
   );
 }

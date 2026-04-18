@@ -28,8 +28,8 @@ export const navItems: MenuItem[] = [
     group: "tools",
   },
   {
-    href: "/genshin-profiles",
-    label: "Genshin Profile",
+    href: "/genshin",
+    label: "Genshin",
     protected: false,
     group: "tools",
   },
