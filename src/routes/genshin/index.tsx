@@ -1,36 +1,36 @@
 import { useAuth } from '@clerk/tanstack-react-start';
-import { useQueries, useSuspenseQuery } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import ProfileCard from './-components/ProfileCard';
 import { AllGenshinProfilesResponse, GenshinProfileStats } from './types';
 import { useState } from 'react';
 import CreateProfileModal from './-components/CreateProfileModal';
 import AnimatedButton from '~/components/AnimatedButton';
-import LoadingSpinner from '~/components/LoadingSpinner';
 import AuthGuard from '~/components/AuthGuard';
 import CharacterViewModal from './-components/CharacterViewModal';
+import LoadingSpinner from '~/components/LoadingSpinner';
 
 export const Route = createFileRoute('/genshin/')({
   component: GenshinProfileIdPage,
-  pendingComponent: () => (
-    <div className="flex justify-center items-center w-full min-h-[50vh]">
-      <LoadingSpinner />
-    </div>
-  ),
-  errorComponent: ({ error }) => (
-    <div className="text-center mt-20 text-destructive font-medium">
-      Error: {error instanceof Error ? error.message : "An unknown error occurred"}
-    </div>
-  ),
+  // pendingComponent: () => (
+  //   <div className="flex justify-center items-center w-full min-h-[50vh]">
+  //     <LoadingSpinner />
+  //   </div>
+  // ),
+  // errorComponent: ({ error }) => (
+  //   <div className="text-center mt-20 text-destructive font-medium">
+  //     Error: {error instanceof Error ? error.message : "An unknown error occurred"}
+  //   </div>
+  // ),
 });
 
 
 function GenshinProfileIdPage() {
-  const { getToken, } = useAuth()
+  const { getToken, isLoaded: isAuthLoaded, isSignedIn } = useAuth()
   const [isOpen, setIsOpen] = useState(false);
   const [isViewCharactersModalOpen, setIsViewCharactersModalOpen] = useState(false);
 
-  const { data: profiles } = useSuspenseQuery({
+  const { data: profiles = [], isFetching, isError, error } = useQuery({
     queryKey: ["api", "v3", "genshin", "profiles"],
     queryFn: async (): Promise<AllGenshinProfilesResponse[]> => {
       const token = await getToken();
@@ -44,6 +44,7 @@ function GenshinProfileIdPage() {
       if (!res.ok) throw new Error(await res.text());
       return await res.json();
     },
+    enabled: isAuthLoaded && isSignedIn,
   });
 
   const profileStatsQueries = useQueries({
@@ -65,6 +66,22 @@ function GenshinProfileIdPage() {
       },
     }))
   });
+
+  if (isFetching) {
+    return (
+      <div className="flex justify-center items-center w-full min-h-[50vh]">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-center mt-20 text-destructive font-medium">
+        Error: {error instanceof Error ? error.message : "An unknown error occurred"}
+      </div>
+    );
+  }
 
   return (
     <AuthGuard>

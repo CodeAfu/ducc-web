@@ -1,26 +1,16 @@
-import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import Container from '~/components/Container';
 import LoadingSpinner from '~/components/LoadingSpinner';
 import { GenshinCharacter } from './types';
 import { useAuth } from '@clerk/tanstack-react-start';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AnimatedButton from '~/components/AnimatedButton';
 import ConfirmationModal from '~/components/ConfirmationModal';
 import React from 'react';
 
 export const Route = createFileRoute('/genshin/characters/$id')({
   component: CharacterPage,
-  pendingComponent: () => (
-    <div className="flex justify-center items-center w-full min-h-[50vh]">
-      <LoadingSpinner />
-    </div>
-  ),
-  errorComponent: ({ error }) => (
-    <div className="text-center mt-20 text-destructive font-medium">
-      Error: {error instanceof Error ? error.message : "An unknown error occurred"}
-    </div>
-  ),
 })
 
 interface EditFormState {
@@ -40,7 +30,7 @@ function CharacterPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  const { data: character } = useSuspenseQuery({
+  const { data: character, isFetching, isError, error } = useQuery({
     queryKey: ["api", "v3", "genshin", "characters", id],
     queryFn: async (): Promise<GenshinCharacter> => {
       const token = await getToken();
@@ -54,12 +44,24 @@ function CharacterPage() {
   });
 
   const [form, setForm] = useState<EditFormState>({
-    name: character.name,
-    display_name: character.display_name ?? "",
-    element_name: character.element_name,
-    stars: character.stars,
-    notes: character.notes ?? "",
+    name: "",
+    display_name: "",
+    element_name: "",
+    stars: 4,
+    notes: "",
   });
+
+  useEffect(() => {
+    if (character) {
+      setForm({
+        name: character.name,
+        display_name: character.display_name ?? "",
+        element_name: character.element_name,
+        stars: character.stars,
+        notes: character.notes ?? "",
+      });
+    }
+  }, [character]);
 
   const editMutation = useMutation({
     mutationFn: async (data: EditFormState) => {
@@ -98,7 +100,23 @@ function CharacterPage() {
     if (!res.ok) throw new Error(await res.text());
   };
 
-  const displayName = character.display_name || character.name;
+  if (isFetching || !character) {
+    return (
+      <div className="flex justify-center items-center w-full min-h-[50vh]">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-center mt-20 text-destructive font-medium">
+        Error: {error instanceof Error ? error.message : "An unknown error occurred"}
+      </div>
+    );
+  }
+
+  const displayName = character!.display_name || character!.name;
   const initials = displayName.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase();
 
   return (
