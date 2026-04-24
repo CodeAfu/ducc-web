@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RedditPlaceholderRouteImport } from './routes/reddit-placeholder'
+import { Route as HylPlaceholderRouteImport } from './routes/hyl-placeholder'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TestsIndexRouteImport } from './routes/tests/index'
@@ -25,6 +27,16 @@ import { Route as GenshinCharactersIdRouteImport } from './routes/genshin/charac
 import { Route as AuthedProfileSplatRouteImport } from './routes/_authed/profile.$'
 import { Route as AuthedPostsPostIdRouteImport } from './routes/_authed/posts.$postId'
 
+const RedditPlaceholderRoute = RedditPlaceholderRouteImport.update({
+  id: '/reddit-placeholder',
+  path: '/reddit-placeholder',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HylPlaceholderRoute = HylPlaceholderRouteImport.update({
+  id: '/hyl-placeholder',
+  path: '/hyl-placeholder',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthedRoute = AuthedRouteImport.update({
   id: '/_authed',
   getParentRoute: () => rootRouteImport,
@@ -102,6 +114,8 @@ const AuthedPostsPostIdRoute = AuthedPostsPostIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/hyl-placeholder': typeof HylPlaceholderRoute
+  '/reddit-placeholder': typeof RedditPlaceholderRoute
   '/posts': typeof AuthedPostsRouteWithChildren
   '/bingo/create': typeof BingoCreateRoute
   '/games/snek': typeof GamesSnekRoute
@@ -118,6 +132,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/hyl-placeholder': typeof HylPlaceholderRoute
+  '/reddit-placeholder': typeof RedditPlaceholderRoute
   '/bingo/create': typeof BingoCreateRoute
   '/games/snek': typeof GamesSnekRoute
   '/bg-remover': typeof BgRemoverIndexRoute
@@ -135,6 +151,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authed': typeof AuthedRouteWithChildren
+  '/hyl-placeholder': typeof HylPlaceholderRoute
+  '/reddit-placeholder': typeof RedditPlaceholderRoute
   '/_authed/posts': typeof AuthedPostsRouteWithChildren
   '/bingo/create': typeof BingoCreateRoute
   '/games/snek': typeof GamesSnekRoute
@@ -153,6 +171,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/hyl-placeholder'
+    | '/reddit-placeholder'
     | '/posts'
     | '/bingo/create'
     | '/games/snek'
@@ -169,6 +189,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/hyl-placeholder'
+    | '/reddit-placeholder'
     | '/bingo/create'
     | '/games/snek'
     | '/bg-remover'
@@ -185,6 +207,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authed'
+    | '/hyl-placeholder'
+    | '/reddit-placeholder'
     | '/_authed/posts'
     | '/bingo/create'
     | '/games/snek'
@@ -203,6 +227,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthedRoute: typeof AuthedRouteWithChildren
+  HylPlaceholderRoute: typeof HylPlaceholderRoute
+  RedditPlaceholderRoute: typeof RedditPlaceholderRoute
   BingoCreateRoute: typeof BingoCreateRoute
   GamesSnekRoute: typeof GamesSnekRoute
   BgRemoverIndexRoute: typeof BgRemoverIndexRoute
@@ -216,6 +242,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reddit-placeholder': {
+      id: '/reddit-placeholder'
+      path: '/reddit-placeholder'
+      fullPath: '/reddit-placeholder'
+      preLoaderRoute: typeof RedditPlaceholderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hyl-placeholder': {
+      id: '/hyl-placeholder'
+      path: '/hyl-placeholder'
+      fullPath: '/hyl-placeholder'
+      preLoaderRoute: typeof HylPlaceholderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authed': {
       id: '/_authed'
       path: ''
@@ -354,6 +394,8 @@ const AuthedRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthedRoute: AuthedRouteWithChildren,
+  HylPlaceholderRoute: HylPlaceholderRoute,
+  RedditPlaceholderRoute: RedditPlaceholderRoute,
   BingoCreateRoute: BingoCreateRoute,
   GamesSnekRoute: GamesSnekRoute,
   BgRemoverIndexRoute: BgRemoverIndexRoute,

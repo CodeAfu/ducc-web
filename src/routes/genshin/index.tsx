@@ -12,16 +12,6 @@ import LoadingSpinner from '~/components/LoadingSpinner';
 
 export const Route = createFileRoute('/genshin/')({
   component: GenshinProfileIdPage,
-  // pendingComponent: () => (
-  //   <div className="flex justify-center items-center w-full min-h-[50vh]">
-  //     <LoadingSpinner />
-  //   </div>
-  // ),
-  // errorComponent: ({ error }) => (
-  //   <div className="text-center mt-20 text-destructive font-medium">
-  //     Error: {error instanceof Error ? error.message : "An unknown error occurred"}
-  //   </div>
-  // ),
 });
 
 
