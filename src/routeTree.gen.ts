@@ -14,6 +14,7 @@ import { Route as HylPlaceholderRouteImport } from './routes/hyl-placeholder'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TestsIndexRouteImport } from './routes/tests/index'
+import { Route as HylIndexRouteImport } from './routes/hyl/index'
 import { Route as GenshinIndexRouteImport } from './routes/genshin/index'
 import { Route as CopiumIndexRouteImport } from './routes/copium/index'
 import { Route as BingoIndexRouteImport } from './routes/bingo/index'
@@ -49,6 +50,11 @@ const IndexRoute = IndexRouteImport.update({
 const TestsIndexRoute = TestsIndexRouteImport.update({
   id: '/tests/',
   path: '/tests/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HylIndexRoute = HylIndexRouteImport.update({
+  id: '/hyl/',
+  path: '/hyl/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GenshinIndexRoute = GenshinIndexRouteImport.update({
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/bingo/': typeof BingoIndexRoute
   '/copium/': typeof CopiumIndexRoute
   '/genshin/': typeof GenshinIndexRoute
+  '/hyl/': typeof HylIndexRoute
   '/tests/': typeof TestsIndexRoute
   '/posts/$postId': typeof AuthedPostsPostIdRoute
   '/profile/$': typeof AuthedProfileSplatRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/bingo': typeof BingoIndexRoute
   '/copium': typeof CopiumIndexRoute
   '/genshin': typeof GenshinIndexRoute
+  '/hyl': typeof HylIndexRoute
   '/tests': typeof TestsIndexRoute
   '/posts/$postId': typeof AuthedPostsPostIdRoute
   '/profile/$': typeof AuthedProfileSplatRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/bingo/': typeof BingoIndexRoute
   '/copium/': typeof CopiumIndexRoute
   '/genshin/': typeof GenshinIndexRoute
+  '/hyl/': typeof HylIndexRoute
   '/tests/': typeof TestsIndexRoute
   '/_authed/posts/$postId': typeof AuthedPostsPostIdRoute
   '/_authed/profile/$': typeof AuthedProfileSplatRoute
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/bingo/'
     | '/copium/'
     | '/genshin/'
+    | '/hyl/'
     | '/tests/'
     | '/posts/$postId'
     | '/profile/$'
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/bingo'
     | '/copium'
     | '/genshin'
+    | '/hyl'
     | '/tests'
     | '/posts/$postId'
     | '/profile/$'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/bingo/'
     | '/copium/'
     | '/genshin/'
+    | '/hyl/'
     | '/tests/'
     | '/_authed/posts/$postId'
     | '/_authed/profile/$'
@@ -235,6 +247,7 @@ export interface RootRouteChildren {
   BingoIndexRoute: typeof BingoIndexRoute
   CopiumIndexRoute: typeof CopiumIndexRoute
   GenshinIndexRoute: typeof GenshinIndexRoute
+  HylIndexRoute: typeof HylIndexRoute
   TestsIndexRoute: typeof TestsIndexRoute
   GenshinCharactersIdRoute: typeof GenshinCharactersIdRoute
   GenshinProfilesIdRoute: typeof GenshinProfilesIdRoute
@@ -275,6 +288,13 @@ declare module '@tanstack/react-router' {
       path: '/tests'
       fullPath: '/tests/'
       preLoaderRoute: typeof TestsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hyl/': {
+      id: '/hyl/'
+      path: '/hyl'
+      fullPath: '/hyl/'
+      preLoaderRoute: typeof HylIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/genshin/': {
@@ -402,6 +422,7 @@ const rootRouteChildren: RootRouteChildren = {
   BingoIndexRoute: BingoIndexRoute,
   CopiumIndexRoute: CopiumIndexRoute,
   GenshinIndexRoute: GenshinIndexRoute,
+  HylIndexRoute: HylIndexRoute,
   TestsIndexRoute: TestsIndexRoute,
   GenshinCharactersIdRoute: GenshinCharactersIdRoute,
   GenshinProfilesIdRoute: GenshinProfilesIdRoute,

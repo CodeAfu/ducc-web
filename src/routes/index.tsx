@@ -33,10 +33,10 @@ function Home() {
           index={2}
         />
         <FeatureCard
-          to="/hyl-placeholder"
+          to="/hyl"
           title="HoyoLab Scraper"
           icon={<ScrollText className="size-8" />}
-          status="placeholder"
+          status="active"
           index={3}
         />
       </div>

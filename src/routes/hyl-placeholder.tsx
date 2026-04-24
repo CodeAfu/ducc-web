@@ -24,7 +24,7 @@ function HoyoLabPlaceholder() {
           </p>
         </div>
         <p className="text-muted-foreground">
-          I'm currently porting the scraper logic to the Go v3 backend.
+          I'm currently porting the scraper logic to the Go v3 backend. 
           Check back later for community update tracking and automated data scraping!
         </p>
         <div className="pt-4">
