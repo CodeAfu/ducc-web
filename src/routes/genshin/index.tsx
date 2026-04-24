@@ -4,6 +4,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import ProfileCard from './-components/ProfileCard';
 import { AllGenshinProfilesResponse, GenshinProfileStats } from './types';
 import { useState } from 'react';
+import { motion } from 'motion/react';
 import CreateProfileModal from './-components/CreateProfileModal';
 import AnimatedButton from '~/components/AnimatedButton';
 import AuthGuard from '~/components/AuthGuard';
@@ -76,7 +77,11 @@ function GenshinProfileIdPage() {
   return (
     <AuthGuard>
       <div className="md:mt-12 mt-4 flex flex-col mx-auto max-w-7xl w-full md:px-8 sm:px-4 px-2">
-        <div className="flex items-center justify-between">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between"
+        >
           <h1 className="font-semibold md:text-3xl text-2xl mb-4">Profiles</h1>
           <div className="flex items-center justify-center gap-2">
             <AnimatedButton variant="outline" onClick={() => setIsOpen(true)}>
@@ -86,7 +91,7 @@ function GenshinProfileIdPage() {
               All Characters
             </AnimatedButton>
           </div>
-        </div>
+        </motion.div>
         <div className="grid md:grid-cols-2 md:gap-4 gap-2">
           {profiles.length === 0 ? (
             <div className="col-span-full py-12 text-center text-muted-foreground border-2 rounded-xl">
@@ -96,17 +101,24 @@ function GenshinProfileIdPage() {
             profiles.map((profile, index) => {
               const { data: stats } = profileStatsQueries[index];
               return (
-                <ProfileCard key={profile.id} profileId={profile.id}>
-                  <p className="text-foreground font-bold tracking-tighter text-lg truncate text-nowrap">{profile.name}</p>
-                  <div className="mt-2 text-sm">
-                    <p>Total Chars:{" "}
-                      <span>{stats?.char_count}</span>
+                <motion.div
+                  key={profile.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.4 }}
+                >
+                  <ProfileCard profileId={profile.id}>
+                    <p className="text-foreground font-bold tracking-tighter text-lg truncate text-nowrap">{profile.name}</p>
+                    <div className="mt-2 text-sm">
+                      <p>Total Chars:{" "}
+                        <span>{stats?.char_count}</span>
+                      </p>
+                    </div>
+                    <p className="pt-2 mt-4 border-t text-muted-foreground text-sm truncate">
+                      Notes: {profile.notes ? profile.notes : "N/A"}
                     </p>
-                  </div>
-                  <p className="pt-2 mt-4 border-t text-muted-foreground text-sm">
-                    Notes: {profile.notes ? profile.notes : "N/A"}
-                  </p>
-                </ProfileCard>
+                  </ProfileCard>
+                </motion.div>
               )
             })
           )}
