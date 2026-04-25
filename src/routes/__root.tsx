@@ -170,7 +170,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="grid grid-rows-[auto_1fr] min-h-screen">
         <Navbar />
-        <main className="flex flex-col">
+        <main className="flex flex-col min-w-0 w-full">
           {children}
           <TanStackRouterDevtools position="bottom-right" />
           <Scripts />
