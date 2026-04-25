@@ -30,14 +30,14 @@ function HylScraperPage() {
   const [isStreaming, setIsStreaming] = useState(false);
 
   const eventSourceRef = useRef<EventSource | null>(null);
-  const resultsEndRef = useRef<HTMLDivElement>(null);
+  // const resultsEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom of list
-  useEffect(() => {
-    if (isStreaming) {
-      resultsEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [results, isStreaming]);
+  // useEffect(() => {
+  //   if (isStreaming) {
+  //     resultsEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  //   }
+  // }, [results, isStreaming]);
 
   const stopScrape = () => {
     if (eventSourceRef.current) {
@@ -202,7 +202,7 @@ function HylScraperPage() {
       </AnimatePresence>
 
       {/* Results Container */}
-      <div className="flex flex-col min-w-0 w-full border border-border rounded-xl bg-card/60 backdrop-blur-sm overflow-hidden">
+      <div className="flex flex-col min-w-0 w-full border border-border rounded-xl bg-card/60 backdrop-blur-sm overflow-hidden mb-24">
         <div className="p-3 md:p-4 border-b border-border bg-muted/20 flex items-center justify-between shrink-0 min-w-0">
           <span className="text-[10px] md:text-xs font-mono uppercase tracking-widest text-muted-foreground truncate">Scrape Stream</span>
           <span className="text-[10px] md:text-xs text-muted-foreground font-mono shrink-0">{results.length} items</span>
