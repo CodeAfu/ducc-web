@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
 import ElementCardInput from "./ElementCardInput";
 import { Ellipsis } from "lucide-react";
-import { ProfileCharacterResponse } from "../types";
+import { ProfileCharacterResponse, ProfileResponse } from "../types";
 import { useAuth } from "@clerk/tanstack-react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -67,13 +67,37 @@ export default function CharacterTableRow({ profileId, character, className, ...
         throw new Error(`Update failed for character '${updatedChar.name}': ${await res.text()}`)
       }
     },
-    onSuccess: () => {
+    onMutate: async (updatedChar) => {
+      await queryClient.cancelQueries({ queryKey: ["api", "v3", "genshin", "profiles", profileId, "characters"] });
+      const previousProfile = queryClient.getQueryData<ProfileResponse>(["api", "v3", "genshin", "profiles", profileId, "characters"]);
+
+      if (previousProfile?.characters) {
+        queryClient.setQueryData<ProfileResponse>(
+          ["api", "v3", "genshin", "profiles", profileId, "characters"],
+          (old) => {
+            if (!old?.characters) return old;
+            return {
+              ...old,
+              characters: old.characters.map((c) => (c.char_id === updatedChar.char_id ? updatedChar : c))
+            };
+          }
+        );
+      }
+
+      return { previousProfile };
+    },
+    onError: (err, _, context) => {
+      console.error(err.message);
+      if (context?.previousProfile) {
+        queryClient.setQueryData(
+          ["api", "v3", "genshin", "profiles", profileId, "characters"],
+          context.previousProfile
+        );
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["api", "v3", "genshin", "profiles", profileId, "characters"] });
     },
-    onError: (err) => {
-      console.error(err.message);
-      setCharState(character);
-    }
   })
   const debouncedUpdate = useDebouncedCallback((updatedData: ProfileCharacterResponse) => {
     toast.promise(updateCharacterMutation(updatedData), {
@@ -118,7 +142,7 @@ export default function CharacterTableRow({ profileId, character, className, ...
         <td className="px-1.5 py-2 text-center border-b">
           <ElementCardInput
             options={[1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].reverse()}
-            defaultValue={character.level}
+            defaultValue={charState.level}
             onValueChange={(val) => handleFieldChange("level", val)}
             min={1}
             max={100}
@@ -129,7 +153,7 @@ export default function CharacterTableRow({ profileId, character, className, ...
             <ElementCardInput
               className="text-foreground/50"
               options={[20, 30, 40, 50, 60, 70, 80, 90, 100].reverse()}
-              defaultValue={character.asc_level}
+              defaultValue={charState.asc_level}
               onValueChange={(val) => handleFieldChange("asc_level", val)}
               min={1}
               max={100}
@@ -139,7 +163,7 @@ export default function CharacterTableRow({ profileId, character, className, ...
         <td className="px-1.5 py-2 text-center border-b">
           <ElementCardInput
             options={[0, 1, 2, 3, 4, 5, 6]}
-            defaultValue={character.constellation}
+            defaultValue={charState.constellation}
             onValueChange={(val) => handleFieldChange("constellation", val)}
             min={0}
             max={6}
@@ -147,9 +171,9 @@ export default function CharacterTableRow({ profileId, character, className, ...
         </td>
         <td className="px-1.5 py-2 text-center border-b">
           <ElementCardInput
-            className={cn("text-primary", character.talent_na_boosted && "text-cyan-400")}
+            className={cn("text-primary", charState.talent_na_boosted && "text-cyan-400")}
             options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].reverse()}
-            defaultValue={character.talent_na_boosted ? character.talent_na + 3 : character.talent_na}
+            defaultValue={charState.talent_na_boosted ? charState.talent_na + 3 : charState.talent_na}
             onValueChange={(val) => handleFieldChange("talent_na", val)}
             min={1}
             max={15}
@@ -157,9 +181,9 @@ export default function CharacterTableRow({ profileId, character, className, ...
         </td>
         <td className="px-1.5 py-2 text-center border-b">
           <ElementCardInput
-            className={cn("text-primary", character.talent_e_boosted && "text-cyan-400")}
+            className={cn("text-primary", charState.talent_e_boosted && "text-cyan-400")}
             options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].reverse()}
-            defaultValue={character.talent_e_boosted ? character.talent_e + 3 : character.talent_e}
+            defaultValue={charState.talent_e_boosted ? charState.talent_e + 3 : charState.talent_e}
             onValueChange={(val) => handleFieldChange("talent_e", val)}
             min={1}
             max={15}
@@ -167,9 +191,9 @@ export default function CharacterTableRow({ profileId, character, className, ...
         </td>
         <td className="px-1.5 py-2 text-center border-b">
           <ElementCardInput
-            className={cn("text-primary", character.talent_q_boosted && "text-cyan-400")}
+            className={cn("text-primary", charState.talent_q_boosted && "text-cyan-400")}
             options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].reverse()}
-            defaultValue={character.talent_q_boosted ? character.talent_q + 3 : character.talent_q}
+            defaultValue={charState.talent_q_boosted ? charState.talent_q + 3 : charState.talent_q}
             onValueChange={(val) => handleFieldChange("talent_q", val)}
             min={1}
             max={15}
