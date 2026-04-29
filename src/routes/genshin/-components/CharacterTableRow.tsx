@@ -72,13 +72,14 @@ export default function CharacterTableRow({ profileId, character, className, ...
     },
     onError: (err) => {
       console.error(err.message);
+      setCharState(character);
     }
   })
   const debouncedUpdate = useDebouncedCallback((updatedData: ProfileCharacterResponse) => {
     toast.promise(updateCharacterMutation(updatedData), {
       loading: `Saving ${updatedData.name}...`,
       success: `Saved ${updatedData.name}`,
-      error: (err) => err.message,
+      error: (err) => `Error updating char '${updatedData.name}': ${err.message}`,
     });
   }, 2000);
 
