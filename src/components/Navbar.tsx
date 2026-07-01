@@ -34,8 +34,8 @@ export const navItems: MenuItem[] = [
     group: "tools",
   },
   {
-    href: "/copium",
-    label: "Copium",
+    href: "/hyl",
+    label: "HoyoLab",
     protected: false,
     group: "tools",
   },

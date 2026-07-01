@@ -2,7 +2,7 @@ import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import Container from '~/components/Container';
 import LoadingSpinner from '~/components/LoadingSpinner';
-import { GenshinCharacter } from './types';
+import { GenshinCharacter } from './-types';
 import { useAuth } from '@clerk/tanstack-react-start';
 import { useEffect, useState } from 'react';
 import AnimatedButton from '~/components/AnimatedButton';

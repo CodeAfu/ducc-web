@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { CharacterListResponse } from "../types";
+import { CharacterListResponse } from "../-types";
 import { cn } from "~/lib/utils";
 
 interface CharacterIconProps extends React.HTMLAttributes<HTMLAnchorElement> {

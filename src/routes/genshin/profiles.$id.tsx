@@ -8,7 +8,7 @@ import ElementCard from "./-components/ElementCard";
 import AuthGuard from "~/components/AuthGuard";
 import Skeleton from "~/components/Skeleton";
 import Container from "~/components/Container";
-import { CharacterListResponse, GenshinProfileStats, ProfileResponse } from "./types";
+import { CharacterListResponse, GenshinProfileStats, ProfileResponse } from "./-types";
 import AnimatedButton from "~/components/AnimatedButton";
 import DeleteProfileModal from "./-components/DeleteProfileModal";
 import AddNotesModal from "./-components/AddNotesModal";

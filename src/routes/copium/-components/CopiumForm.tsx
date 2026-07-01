@@ -1,6 +1,6 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import TextInput from "~/components/TextInput";
-import { formSchema, TFormSchema } from "../types";
+import { formSchema, TFormSchema } from "../-types";
 import AnimatedButton from "~/components/AnimatedButton";
 import { zodResolver } from "@hookform/resolvers/zod";
 

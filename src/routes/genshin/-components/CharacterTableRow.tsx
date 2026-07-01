@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
 import ElementCardInput from "./ElementCardInput";
 import { Ellipsis } from "lucide-react";
-import { ProfileCharacterResponse, ProfileResponse } from "../types";
+import { ProfileCharacterResponse, ProfileResponse } from "../-types";
 import { useAuth } from "@clerk/tanstack-react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";

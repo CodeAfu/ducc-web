@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "motion/react";
 import { ScrollText, Play, Square, ExternalLink, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import AnimatedButton from "~/components/AnimatedButton";
 import { cn } from "~/lib/utils";
+import { useStartHylScrape } from "~/hooks/useStartHylScrape";
+import { useAuth } from "@clerk/tanstack-react-start";
 
 export const Route = createFileRoute("/hyl/")({
   component: HylScraperPage,
@@ -17,85 +19,50 @@ interface ScrapedPost {
   author: string;
 }
 
-interface LinkResult extends Partial<ScrapedPost> {
-  status: ScraperStatus;
-  error?: string;
-}
 
 function HylScraperPage() {
   const [limit, setLimit] = useState(10);
   const [status, setStatus] = useState<ScraperStatus>("idle");
   const [results, setResults] = useState<ScrapedPost[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [isStreaming, setIsStreaming] = useState(false);
+  const { getToken, isLoaded: isAuthLoaded } = useAuth()
 
+  // Reserved for the upcoming SSE subscribe endpoint (Postgres LISTEN/NOTIFY)
   const eventSourceRef = useRef<EventSource | null>(null);
-  // const resultsEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom of list
-  // useEffect(() => {
-  //   if (isStreaming) {
-  //     resultsEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  //   }
-  // }, [results, isStreaming]);
+  const startHylScrape = useStartHylScrape(getToken);
+
+  const isActive = startHylScrape.isPending || status === "fetching";
 
   const stopScrape = () => {
+    startHylScrape.reset();
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
       eventSourceRef.current = null;
     }
-    setIsStreaming(false);
+    setStatus("idle");
   };
 
   const startScrape = () => {
-    // Reset state
     setResults([]);
     setErrorMsg(null);
     setStatus("initializing");
-    setIsStreaming(true);
 
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-    }
-
-    const url = `${import.meta.env.VITE_API_URL}/api/v3/hylscraper/scrape?limit=${limit}`;
-    const es = new EventSource(url, { withCredentials: true });
-    eventSourceRef.current = es;
-
-    es.onmessage = (event) => {
-      try {
-        const data: LinkResult = JSON.parse(event.data);
-        setStatus(data.status);
-
-        if (data.url && data.title && data.author) {
-          setResults((prev) => [...prev, {
-            url: data.url!,
-            title: data.title!,
-            author: data.author!,
-          }]);
-        }
-
-        if (data.error) {
-          setErrorMsg(data.error);
+    startHylScrape.mutate(
+      { limit },
+      {
+        onSuccess: (jobId) => {
+          // jobId available for the SSE subscribe endpoint
+          console.log("Scrape job initialised:", jobId);
+          // TODO: open EventSource to /api/v3/hylscraper/subscribe?jobId=<jobId>
+          setStatus("fetching");
+        },
+        onError: (err) => {
+          setErrorMsg(err.message);
           setStatus("error");
-          stopScrape();
-        }
-      } catch (err) {
-        console.error("Failed to parse SSE message:", err);
+        },
       }
-    };
-
-    es.addEventListener("done", () => {
-      setStatus("done");
-      stopScrape();
-    });
-
-    es.onerror = (err) => {
-      console.error("SSE Error:", err);
-      setErrorMsg("Connection to scraper lost or failed.");
-      setStatus("error");
-      stopScrape();
-    };
+    );
   };
 
   // Cleanup on unmount
@@ -106,6 +73,10 @@ function HylScraperPage() {
       }
     };
   }, []);
+
+  if (!isAuthLoaded) {
+    return null
+  }
 
   return (
     <div className="flex flex-col mx-auto max-w-5xl w-full min-w-0 p-4 md:p-8 space-y-8 font-sans">
@@ -136,12 +107,12 @@ function HylScraperPage() {
             type="number"
             value={limit}
             onChange={(e) => setLimit(Math.max(1, parseInt(e.target.value) || 1))}
-            disabled={isStreaming}
+            // disabled={isStreaming}
             className="w-full h-10 md:h-11 bg-background border border-border rounded-lg px-4 focus:ring-2 focus:ring-primary/50 outline-none transition-all disabled:opacity-50"
           />
         </div>
         <div className="flex gap-2 w-full md:w-auto shrink-0">
-          {!isStreaming ? (
+          {!isActive ? (
             <AnimatedButton
               variant="primary"
               className="flex-1 md:w-32 h-10 md:h-11"

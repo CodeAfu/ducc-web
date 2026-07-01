@@ -32,7 +32,7 @@ export default function RedditItem({
       variants={variants}
       whileHover="hover"
     >
-      <div className="flex gap-2 pb-1 mb-1 border-b-1">
+      <div className="flex gap-2 pb-1 mb-1 border-b">
         <div className="flex flex-col flex-1 overflow-hidden">
           <h1 className="font-bold sm:text-2xl text-lg h-fit truncate">
             <a

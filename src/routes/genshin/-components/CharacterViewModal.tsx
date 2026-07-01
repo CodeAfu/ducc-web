@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Modal from "~/components/Modal";
 import { cn } from "~/lib/utils";
-import { CharacterListResponse } from "../types";
+import { CharacterListResponse } from "../-types";
 import { useAuth } from "@clerk/tanstack-react-start";
 import CharacterIcon from "./CharacterIcon";
 

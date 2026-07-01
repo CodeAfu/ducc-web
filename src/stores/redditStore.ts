@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { RedditResult } from "~/routes/copium/types";
+import { RedditResult } from "~/routes/copium/-types";
 
 type RedditStates = {
   results: RedditResult[];

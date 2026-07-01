@@ -2,7 +2,7 @@ import { useAuth } from '@clerk/tanstack-react-start';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import ProfileCard from './-components/ProfileCard';
-import { AllGenshinProfilesResponse, GenshinProfileStats } from './types';
+import { AllGenshinProfilesResponse, GenshinProfileStats } from './-types';
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import CreateProfileModal from './-components/CreateProfileModal';
