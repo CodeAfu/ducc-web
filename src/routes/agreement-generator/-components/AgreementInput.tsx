@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
 
-interface AgreementInputProps extends React.InputHTMLAttributes<HTMLInputElement> { }
+interface AgreementInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange"> {
+  value: string;
+  onChange: (v: string) => void;
+}
 
-export function AgreementInput({ placeholder, className, onChange, ...props }: AgreementInputProps) {
-  const [value, setValue] = useState("");
+export function AgreementInput({ value, onChange, placeholder, className, ...props }: AgreementInputProps) {
   const spanRef = useRef<HTMLSpanElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [width, setWidth] = useState<number>();
 
   useEffect(() => {
@@ -18,15 +21,14 @@ export function AgreementInput({ placeholder, className, onChange, ...props }: A
         {value || placeholder || ""}
       </span>
       <input
+        ref={inputRef}
         type="text"
         value={value}
-        style={{ width: width ? `${Math.max(width, 96)}px` : undefined }}
-        onChange={(e) => {
-          setValue(e.target.value);
-          onChange?.(e);
-        }}
+        style={{ width: width ? `${Math.max(width, 16)}px` : undefined }}
+        onChange={(e) => onChange(e.target.value)}
         className={cn(
-          "bg-transparent border-b border-current outline-none px-1 mx-1.5 align-baseline text-primary",
+          "bg-transparent border-b border-current outline-none px-1 align-baseline text-primary",
+          inputRef.current?.value === "" && "text-red-400",
           className
         )}
         placeholder={placeholder}

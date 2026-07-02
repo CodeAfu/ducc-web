@@ -36,13 +36,13 @@ export const navItems: MenuItem[] = [
   {
     href: "/hyl",
     label: "HoyoLab",
-    protected: false,
+    protected: true,
     group: "tools",
   },
   {
     href: "/agreement-generator",
     label: "Agreement",
-    protected: true,
+    protected: false,
   },
   {
     href: "/tests",
