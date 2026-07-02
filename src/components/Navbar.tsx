@@ -40,6 +40,11 @@ export const navItems: MenuItem[] = [
     group: "tools",
   },
   {
+    href: "/agreement-generator",
+    label: "Agreement",
+    protected: true,
+  },
+  {
     href: "/tests",
     label: "Tests",
     protected: true,

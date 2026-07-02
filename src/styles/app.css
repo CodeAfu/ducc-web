@@ -2,6 +2,12 @@
 
 @plugin 'tailwindcss-animate';
 
+@font-face {
+  font-family: 'Faruma';
+  src: url('/fonts/Faruma.otf') format('opentype');
+  font-display: swap;
+}
+
 :root {
   --background: oklch(0.1187 0.0705 282.6283);
   --foreground: oklch(0.9491 0 0);
@@ -114,6 +120,8 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+
+  --font-faruma: 'Faruma', sans-serif;
 }
 
 @layer base {

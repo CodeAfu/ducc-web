@@ -17,6 +17,7 @@ import { Route as GenshinIndexRouteImport } from './routes/genshin/index'
 import { Route as CopiumIndexRouteImport } from './routes/copium/index'
 import { Route as BingoIndexRouteImport } from './routes/bingo/index'
 import { Route as BgRemoverIndexRouteImport } from './routes/bg-remover/index'
+import { Route as AgreementGeneratorIndexRouteImport } from './routes/agreement-generator/index'
 import { Route as GamesSnekRouteImport } from './routes/games/snek'
 import { Route as BingoCreateRouteImport } from './routes/bingo/create'
 import { Route as AuthedPostsRouteImport } from './routes/_authed/posts'
@@ -65,6 +66,11 @@ const BgRemoverIndexRoute = BgRemoverIndexRouteImport.update({
   path: '/bg-remover/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgreementGeneratorIndexRoute = AgreementGeneratorIndexRouteImport.update({
+  id: '/agreement-generator/',
+  path: '/agreement-generator/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GamesSnekRoute = GamesSnekRouteImport.update({
   id: '/games/snek',
   path: '/games/snek',
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/posts': typeof AuthedPostsRouteWithChildren
   '/bingo/create': typeof BingoCreateRoute
   '/games/snek': typeof GamesSnekRoute
+  '/agreement-generator/': typeof AgreementGeneratorIndexRoute
   '/bg-remover/': typeof BgRemoverIndexRoute
   '/bingo/': typeof BingoIndexRoute
   '/copium/': typeof CopiumIndexRoute
@@ -127,6 +134,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bingo/create': typeof BingoCreateRoute
   '/games/snek': typeof GamesSnekRoute
+  '/agreement-generator': typeof AgreementGeneratorIndexRoute
   '/bg-remover': typeof BgRemoverIndexRoute
   '/bingo': typeof BingoIndexRoute
   '/copium': typeof CopiumIndexRoute
@@ -146,6 +154,7 @@ export interface FileRoutesById {
   '/_authed/posts': typeof AuthedPostsRouteWithChildren
   '/bingo/create': typeof BingoCreateRoute
   '/games/snek': typeof GamesSnekRoute
+  '/agreement-generator/': typeof AgreementGeneratorIndexRoute
   '/bg-remover/': typeof BgRemoverIndexRoute
   '/bingo/': typeof BingoIndexRoute
   '/copium/': typeof CopiumIndexRoute
@@ -165,6 +174,7 @@ export interface FileRouteTypes {
     | '/posts'
     | '/bingo/create'
     | '/games/snek'
+    | '/agreement-generator/'
     | '/bg-remover/'
     | '/bingo/'
     | '/copium/'
@@ -181,6 +191,7 @@ export interface FileRouteTypes {
     | '/'
     | '/bingo/create'
     | '/games/snek'
+    | '/agreement-generator'
     | '/bg-remover'
     | '/bingo'
     | '/copium'
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/_authed/posts'
     | '/bingo/create'
     | '/games/snek'
+    | '/agreement-generator/'
     | '/bg-remover/'
     | '/bingo/'
     | '/copium/'
@@ -217,6 +229,7 @@ export interface RootRouteChildren {
   AuthedRoute: typeof AuthedRouteWithChildren
   BingoCreateRoute: typeof BingoCreateRoute
   GamesSnekRoute: typeof GamesSnekRoute
+  AgreementGeneratorIndexRoute: typeof AgreementGeneratorIndexRoute
   BgRemoverIndexRoute: typeof BgRemoverIndexRoute
   BingoIndexRoute: typeof BingoIndexRoute
   CopiumIndexRoute: typeof CopiumIndexRoute
@@ -283,6 +296,13 @@ declare module '@tanstack/react-router' {
       path: '/bg-remover'
       fullPath: '/bg-remover/'
       preLoaderRoute: typeof BgRemoverIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agreement-generator/': {
+      id: '/agreement-generator/'
+      path: '/agreement-generator'
+      fullPath: '/agreement-generator/'
+      preLoaderRoute: typeof AgreementGeneratorIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/games/snek': {
@@ -376,6 +396,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthedRoute: AuthedRouteWithChildren,
   BingoCreateRoute: BingoCreateRoute,
   GamesSnekRoute: GamesSnekRoute,
+  AgreementGeneratorIndexRoute: AgreementGeneratorIndexRoute,
   BgRemoverIndexRoute: BgRemoverIndexRoute,
   BingoIndexRoute: BingoIndexRoute,
   CopiumIndexRoute: CopiumIndexRoute,
