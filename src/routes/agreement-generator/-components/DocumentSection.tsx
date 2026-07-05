@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { AgreementInput } from "./AgreementInput";
 import { Paragraph } from "./Paragraph";
 import { FormFieldKey, FormValues } from "../-types";
@@ -18,9 +18,12 @@ function FormField({ name, form, setField }: {
   );
 }
 
-export function DocumentSection() {
-  const [form, setForm] = useState<FormValues>({})
+interface DocumentSectionProps {
+  form: Partial<Record<FormFieldKey, string>>;
+  setForm: Dispatch<SetStateAction<Partial<Record<FormFieldKey, string>>>>
+}
 
+export function DocumentSection({ form, setForm }: DocumentSectionProps) {
   const setField = (key: string) => (v: string) =>
     setForm(prev => ({ ...prev, [key]: v }))
 
@@ -173,7 +176,6 @@ export function DocumentSection() {
         <br />
         -----------------------------------------------------------------<br />
       </Paragraph>
-
     </section>
   )
 }
