@@ -83,7 +83,7 @@ export default function Modal({
             data-modal-content
           >
             <div className="flex items-center justify-start mb-4 px-2 pt-2">
-              <h1 className="flex-1 text-xl mr-4 font-bold">{title}</h1>
+              <h1 className="flex-1 text-xl mr-4 font-bold truncate">{title}</h1>
               <motion.button
                 onClick={onClose}
                 className="self-end size-8 p-0.5 text-xl text-card-foreground font-bold"

@@ -5,7 +5,7 @@ export interface AgreementRequest {
   floor_number: string;
   single_deposit: string;
   agreement_start: Date;
-  agreement_duration: number;
+  agreement_duration?: number;
   sig_tenant_name?: string;
   sig_tenant_id?: string;
   sig_tenant_address?: string;
