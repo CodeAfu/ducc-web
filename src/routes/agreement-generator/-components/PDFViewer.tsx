@@ -12,7 +12,7 @@ export function ModalPDFViewer({ url, isOpen, onClose, className, ...props }: Mo
   if (!url) return null;
   return (
     <Modal
-      width={"7xl"}
+      width={"5xl"}
       isOpen={isOpen}
       onClose={onClose}
       title="This preview looks broken, I know."
@@ -21,11 +21,12 @@ export function ModalPDFViewer({ url, isOpen, onClose, className, ...props }: Mo
         src={url}
         title="PDF preview"
         className={cn(
-          "w-full min-h-[80vh] rounded-md border border-border",
+          "w-full h-full min-h-[80vh] rounded-md border border-border",
           className
         )}
         {...props}
       />
+      <div className="text-muted-foreground text-xs">Only open the docx file using msword. Any other document app will break the format of this agreement.</div>
     </Modal>
   );
 }

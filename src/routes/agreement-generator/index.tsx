@@ -18,7 +18,7 @@ function AgreementGeneratorPage() {
     <Container className="mb-32 space-y-4">
       <h1 className="my-4 text-2xl md:text-3xl font-bold tracking-tight truncate">Astral Agreement</h1>
       <DocumentSection form={form} setForm={setForm} />
-      <Controls form={form} setUrl={setPdfUrl} setOpen={setPdfModalOpen} />
+      <Controls form={form} url={pdfUrl} setUrl={setPdfUrl} setOpen={setPdfModalOpen} />
       <ModalPDFViewer url={pdfUrl} isOpen={pdfModalOpen} onClose={() => setPdfModalOpen(false)} />
     </Container>
   )

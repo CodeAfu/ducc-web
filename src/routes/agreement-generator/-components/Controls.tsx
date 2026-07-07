@@ -8,11 +8,12 @@ import { base64ToBytes } from "~/utils/utils";
 
 interface ControlsProps {
   form: Partial<Record<FormFieldKey, string>>;
+  url: string | null;
   setUrl: Dispatch<SetStateAction<string | null>>;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export function Controls({ form, setUrl, setOpen }: ControlsProps) {
+export function Controls({ form, url, setUrl, setOpen }: ControlsProps) {
   const { getToken } = useAuth();
 
   const { mutateAsync: downloadMutationAsync, isPending: isPendingDownload, isError: isDownloadError, error: downloadError } = useMutation({
@@ -49,6 +50,9 @@ export function Controls({ form, setUrl, setOpen }: ControlsProps) {
 
   const { mutateAsync: previewMutationAsync, isPending: isPendingPreview, isSuccess: isPreviewSuccess, isError: isPreviewError, error: previewError } = useMutation({
     mutationFn: async (req: AgreementRequest) => {
+      if (url) {
+        setOpen(true);
+      };
       const token = await getToken();
       if (!token) throw new Error("You are not authorized to use this endpoint");
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v3/agreement-generator/preview`, {
@@ -69,7 +73,6 @@ export function Controls({ form, setUrl, setOpen }: ControlsProps) {
       const pdfUrl = URL.createObjectURL(blob);
       setUrl(pdfUrl);
       setOpen(true);
-      return pdfUrl;
     },
     onSuccess: () => {
       console.log("success")
@@ -122,10 +125,6 @@ export function Controls({ form, setUrl, setOpen }: ControlsProps) {
       error: (e) => `Failed to load preview document: ${e}`,
     })
   }
-
-  // if (isAuthLoaded && isSignedIn) {
-  //   return null;
-  // }
 
   return (
     <div className="border rounded border-primary py-4 px-8 flex flex-row-reverse gap-3">
