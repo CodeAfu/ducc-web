@@ -1,44 +1,26 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { Sword, LayoutGrid, MessageCircle, ScrollText, ArrowRight } from "lucide-react";
-import { ReactNode } from "react";
+import { ArrowRight } from "lucide-react";
+import { navItems } from "~/navigation";
 
 export const Route = createFileRoute("/")({
   component: Home,
 });
 
 function Home() {
+  const visibleNavItems = navItems.filter(
+    (item) => (!item.protected || process.env.NODE_ENV === "development") && item.href !== "/"
+  );
   return (
     <div className="flex flex-col items-center justify-center p-6 md:p-12 max-w-6xl mx-auto w-full">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-        <FeatureCard
-          to="/genshin"
-          title="Genshin Stuff"
-          icon={<Sword className="size-8" />}
-          status="active"
-          index={0}
-        />
-        <FeatureCard
-          to="/bingo"
-          title="Bingo Card"
-          icon={<LayoutGrid className="size-8" />}
-          status="active"
-          index={1}
-        />
-        <FeatureCard
-          to="/copium"
-          title="Reddit Scraper"
-          icon={<MessageCircle className="size-8" />}
-          status="placeholder"
-          index={2}
-        />
-        <FeatureCard
-          to="/hyl"
-          title="HoyoLab Scraper"
-          icon={<ScrollText className="size-8" />}
-          status="active"
-          index={3}
-        />
+        {visibleNavItems.map((navItem, i) => (
+          <FeatureCard
+            to={navItem.href}
+            title={navItem.cardTitle}
+            index={i}
+          />
+        ))}
       </div>
     </div>
   );
@@ -47,12 +29,10 @@ function Home() {
 interface FeatureCardProps {
   to: string;
   title: string;
-  icon: ReactNode;
-  status: "active" | "placeholder";
   index: number;
 }
 
-function FeatureCard({ to, title, icon, status, index }: FeatureCardProps) {
+function FeatureCard({ to, title, index }: FeatureCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -64,10 +44,11 @@ function FeatureCard({ to, title, icon, status, index }: FeatureCardProps) {
         className="group relative flex flex-col gap-6 p-8 rounded-xl border border-border bg-card/60 backdrop-blur-sm 
                    hover:border-primary/50 transition-all duration-300 h-full overflow-hidden"
       >
+        {/*
         <div className="flex items-center justify-between">
-          <div className="p-3 rounded-lg bg-background border border-border group-hover:border-primary/30 group-hover:text-primary transition-colors">
-            {icon}
-          </div>
+            <div className="p-3 rounded-lg bg-background border border-border group-hover:border-primary/30 group-hover:text-primary transition-colors">
+              {icon}
+            </div>
           <span className={`text-[10px] font-mono uppercase tracking-widest px-2 py-1 rounded border ${status === "active"
             ? "border-accent/50 text-accent bg-accent/10"
             : "border-muted-foreground/30 text-muted-foreground bg-muted/20"
@@ -75,6 +56,7 @@ function FeatureCard({ to, title, icon, status, index }: FeatureCardProps) {
             {status}
           </span>
         </div>
+        */}
 
         <div className="flex items-center justify-between group-hover:translate-x-1 transition-transform">
           <h2 className="text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors font-sans">

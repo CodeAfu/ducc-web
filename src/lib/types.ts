@@ -22,6 +22,7 @@ export type NavGroup = "tools" | "games";
 export interface MenuItem {
   href: string;
   label: string;
+  cardTitle: string;
   protected?: boolean;
   group?: NavGroup;
 }

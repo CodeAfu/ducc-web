@@ -4,52 +4,10 @@ import { Button } from "./ui/button";
 import { Fragment, useState } from "react";
 import SideNav from "./SideNav";
 import { SignedIn, UserButton, SignedOut } from "@clerk/tanstack-react-start";
-import { MenuItem } from "~/lib/types";
 import LoginButton from "./LoginButton";
 import logo from "~/assets/ducc_hed.png";
 import { Link } from "@tanstack/react-router";
-
-export const navItems: MenuItem[] = [
-  {
-    href: "/",
-    label: "Home",
-    protected: false,
-  },
-  // {
-  //   href: "/bg-remover",
-  //   label: "BG Remover",
-  //   protected: false,
-  //   group: "tools",
-  // },
-  {
-    href: "/bingo",
-    label: "Bingo",
-    protected: false,
-    group: "tools",
-  },
-  {
-    href: "/genshin",
-    label: "Genshin",
-    protected: false,
-    group: "tools",
-  },
-  {
-    href: "/hyl",
-    label: "HoyoLab",
-    protected: true,
-    group: "tools",
-  },
-  {
-    href: "/agreement-generator",
-    label: "Agreement",
-    protected: false,
-  },
-  {
-    href: "/tests",
-    label: "Tests",
-    protected: true,
-  },
-];
+import { navItems } from "~/navigation";
 
 export default function Navbar() {
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
