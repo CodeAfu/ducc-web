@@ -6,12 +6,13 @@ import AnimatedButton from "~/components/AnimatedButton";
 import { cn } from "~/lib/utils";
 import { useStartHylScrape } from "~/hooks/useStartHylScrape";
 import { useAuth } from "@clerk/tanstack-react-start";
+import { subscribeToHylScrape } from "~/utils/utils";
 
 export const Route = createFileRoute("/hyl/")({
   component: HylScraperPage,
 });
 
-type ScraperStatus = "idle" | "initializing" | "fetching" | "done" | "error";
+type ScraperStatus = "idle" | "initializing" | "connected" | "fetching" | "done" | "error";
 
 interface ScrapedPost {
   url: string;
@@ -19,6 +20,38 @@ interface ScrapedPost {
   author: string;
 }
 
+/**
+ * Matches the NotifyPayload struct sent by the Go API via pg_notify.
+ * Fields use the lowercase json tags defined on the Go structs.
+ */
+interface HylNotifyPayload {
+  session_id: number;
+  /** "post" or "comment" */
+  payload_type: "post" | "comment";
+  post?: {
+    id: number;
+    session_id: number;
+    url: string;
+    author: string;
+    title: string;
+    content: string;
+  };
+  comments?: Array<{
+    id: number;
+    session_id: number;
+    post_id: number;
+    url: string;
+    author: string;
+    content: string;
+  }>;
+}
+
+function getPayloadPost(payload: HylNotifyPayload): ScrapedPost | null {
+  if (payload.payload_type !== "post" || !payload.post) return null;
+  const { url, title, author } = payload.post;
+  if (!url || !title || !author) return null;
+  return { url, title, author };
+}
 
 function HylScraperPage() {
   const [limit, setLimit] = useState(10);
@@ -27,8 +60,7 @@ function HylScraperPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const { getToken, isLoaded: isAuthLoaded } = useAuth()
 
-  // Reserved for the upcoming SSE subscribe endpoint (Postgres LISTEN/NOTIFY)
-  const eventSourceRef = useRef<EventSource | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const startHylScrape = useStartHylScrape(getToken);
 
@@ -36,10 +68,8 @@ function HylScraperPage() {
 
   const stopScrape = () => {
     startHylScrape.reset();
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-      eventSourceRef.current = null;
-    }
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
     setStatus("idle");
   };
 
@@ -51,11 +81,47 @@ function HylScraperPage() {
     startHylScrape.mutate(
       { limit },
       {
-        onSuccess: (jobId) => {
-          // jobId available for the SSE subscribe endpoint
-          console.log("Scrape job initialised:", jobId);
-          // TODO: open EventSource to /api/v3/hylscraper/subscribe?jobId=<jobId>
-          setStatus("fetching");
+        onSuccess: async (session) => {
+          const token = await getToken();
+          if (!token) {
+            setErrorMsg("Unauthorized");
+            setStatus("error");
+            return;
+          }
+
+          const controller = new AbortController();
+          abortControllerRef.current = controller;
+          setStatus("connected");
+
+          try {
+            await subscribeToHylScrape<HylNotifyPayload>({
+              sessionId: session.id,
+              token,
+              signal: controller.signal,
+              onReady: () => {
+                setStatus("fetching");
+              },
+              onMessage: (data) => {
+                const post = getPayloadPost(data);
+                if (post) {
+                  setResults((current) => [...current, post]);
+                }
+              },
+            });
+
+            // The current backend does not publish a terminal notification.
+            // A closed connection only means the subscription ended.
+            if (!controller.signal.aborted) setStatus("idle");
+          } catch (error) {
+            if (!controller.signal.aborted) {
+              setErrorMsg(error instanceof Error ? error.message : "SSE connection failed");
+              setStatus("error");
+            }
+          } finally {
+            if (abortControllerRef.current === controller) {
+              abortControllerRef.current = null;
+            }
+          }
         },
         onError: (err) => {
           setErrorMsg(err.message);
@@ -68,9 +134,7 @@ function HylScraperPage() {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-      }
+      abortControllerRef.current?.abort();
     };
   }, []);
 
@@ -146,12 +210,14 @@ function HylScraperPage() {
             <div className={cn(
               "flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border gap-2 min-w-0",
               status === "initializing" && "bg-blue-500/10 border-blue-500/30 text-blue-400",
+              status === "connected" && "bg-yellow-500/10 border-yellow-500/30 text-yellow-400",
               status === "fetching" && "bg-primary/10 border-primary/30 text-primary",
               status === "done" && "bg-accent/10 border-accent/30 text-accent",
               status === "error" && "bg-destructive/10 border-destructive/30 text-destructive"
             )}>
               <div className="flex items-center gap-3 min-w-0">
                 {status === "initializing" && <Loader2 className="size-5 animate-spin" />}
+                {status === "connected" && <Loader2 className="size-5 animate-spin" />}
                 {status === "fetching" && <Loader2 className="size-5 animate-spin" />}
                 {status === "done" && <CheckCircle2 className="size-5" />}
                 {status === "error" && <AlertCircle className="size-5" />}

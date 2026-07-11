@@ -3,6 +3,7 @@ import { AgreementInput } from "./AgreementInput";
 import { Paragraph } from "./Paragraph";
 import { FormFieldKey, FormValues } from "../-types";
 import { FIELD_PLACEHOLDERS } from "../-constants";
+import { motion } from "motion/react";
 
 function FormField({ name, form, setField }: {
   name: FormFieldKey;
@@ -28,9 +29,11 @@ export function DocumentSection({ form, setForm }: DocumentSectionProps) {
     setForm(prev => ({ ...prev, [key]: v }))
 
   return (
-    <section
+    <motion.section
       dir="rtl"
-      className="border shadow flex flex-col gap-6 py-4 px-8 bg-gray-100/10 text-gray-200 font-faruma font-semibold md:text-xl rounded"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="border shadow flex flex-col gap-6 py-4 px-8 bg-gray-100/10 text-gray-200 font-faruma font-semibold md:text-xl rounded "
     >
       <Paragraph>
         މިއީ، މއ. އަސްޓްރަލް ބަހައިގެން ގ. ހިޔާ އަތިއްޔާ އަލީ އަށް ލިބުނު ބައިގައި ކޮށްފަހުރި އިމާރާތުގެ{" "}
@@ -176,6 +179,6 @@ export function DocumentSection({ form, setForm }: DocumentSectionProps) {
         <br />
         -----------------------------------------------------------------<br />
       </Paragraph>
-    </section>
+    </motion.section>
   )
 }
