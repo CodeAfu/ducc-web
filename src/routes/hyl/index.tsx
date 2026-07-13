@@ -7,44 +7,11 @@ import { cn } from "~/lib/utils";
 import { useStartHylScrape } from "~/hooks/useStartHylScrape";
 import { useAuth } from "@clerk/tanstack-react-start";
 import { subscribeToHylScrape } from "~/utils/utils";
+import { HylNotifyPayload, ScrapedPost, ScraperStatus } from "./-types";
 
 export const Route = createFileRoute("/hyl/")({
   component: HylScraperPage,
 });
-
-type ScraperStatus = "idle" | "initializing" | "connected" | "fetching" | "done" | "error";
-
-interface ScrapedPost {
-  url: string;
-  title: string;
-  author: string;
-}
-
-/**
- * Matches the NotifyPayload struct sent by the Go API via pg_notify.
- * Fields use the lowercase json tags defined on the Go structs.
- */
-interface HylNotifyPayload {
-  session_id: number;
-  /** "post" or "comment" */
-  payload_type: "post" | "comment";
-  post?: {
-    id: number;
-    session_id: number;
-    url: string;
-    author: string;
-    title: string;
-    content: string;
-  };
-  comments?: Array<{
-    id: number;
-    session_id: number;
-    post_id: number;
-    url: string;
-    author: string;
-    content: string;
-  }>;
-}
 
 function getPayloadPost(payload: HylNotifyPayload): ScrapedPost | null {
   if (payload.payload_type !== "post" || !payload.post) return null;
@@ -94,12 +61,17 @@ function HylScraperPage() {
           setStatus("connected");
 
           try {
+            let completed = false;
             await subscribeToHylScrape<HylNotifyPayload>({
               sessionId: session.id,
               token,
               signal: controller.signal,
               onReady: () => {
                 setStatus("fetching");
+              },
+              onDone: () => {
+                completed = true;
+                setStatus("done");
               },
               onMessage: (data) => {
                 const post = getPayloadPost(data);
@@ -109,9 +81,7 @@ function HylScraperPage() {
               },
             });
 
-            // The current backend does not publish a terminal notification.
-            // A closed connection only means the subscription ended.
-            if (!controller.signal.aborted) setStatus("idle");
+            if (!controller.signal.aborted && !completed) setStatus("idle");
           } catch (error) {
             if (!controller.signal.aborted) {
               setErrorMsg(error instanceof Error ? error.message : "SSE connection failed");
@@ -131,7 +101,6 @@ function HylScraperPage() {
     );
   };
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       abortControllerRef.current?.abort();

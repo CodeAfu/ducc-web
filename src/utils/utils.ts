@@ -14,6 +14,7 @@ interface SubscribeToHylScrapeOptions<T> {
   signal: AbortSignal;
   /** Called when the server signals it is ready to stream (event: ready). */
   onReady?: (sessionId: number) => void;
+  onDone?: (sessionId: number) => void;
   onMessage: (payload: T) => void;
 }
 
@@ -25,12 +26,14 @@ interface SubscribeToHylScrapeOptions<T> {
  * Named events sent by the server:
  *   event: ready  →  routed to onReady (session is live, data will follow)
  *   (no event)    →  routed to onMessage
+ *   event: completed  → session done // TODO
  */
 export async function subscribeToHylScrape<T>({
   sessionId,
   token,
   signal,
   onReady,
+  onDone,
   onMessage,
 }: SubscribeToHylScrapeOptions<T>): Promise<void> {
   const response = await fetch(
@@ -84,6 +87,17 @@ export async function subscribeToHylScrape<T>({
           } catch {
             // Malformed ready payload — still notify with the requested id.
             onReady?.(sessionId);
+          }
+          continue;
+        }
+
+        if (eventName === "done") {
+          try {
+            const parsed = JSON.parse(data) as { session_id: number };
+            onDone?.(parsed.session_id);
+          } catch {
+            // Malformed ready payload — still notify with the requested id.
+            onDone?.(sessionId);
           }
           continue;
         }
