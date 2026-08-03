@@ -1,21 +1,11 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { useShallow } from "zustand/react/shallow"
+import { AgreementRequest } from "~/routes/agreement-generator/-types";
 
-type AgreementStates = {
-  tenant_info: string;
-  rent_amount: string;
-  floor_number: string;
-  single_deposit: string;
-  agreement_start: Date;
-  agreement_duration?: number;
-  sig_tenant_name?: string;
-  sig_tenant_id?: string;
-  sig_tenant_address?: string;
-  tenant_phone_number?: string;
-}
+type AgreementStates = AgreementRequest;
 
-type AgreementActions = {
+interface AgreementActions {
   setTenantInfo: (tenant_info: string | null) => void;
   setRentAmount: (rent_amount: string | null) => void;
   setFloorNumber: (floor_number: string | null) => void;
@@ -112,5 +102,8 @@ export const useSetFloorNumber = () => useAgreementStore((state) => state.setFlo
 export const useSetAgreementStart = () => useAgreementStore((state) => state.setAgreementStart);
 export const useSetSingleDeposit = () => useAgreementStore((state) => state.setSingleDeposit);
 export const useSetAgreementDuration = () => useAgreementStore((state) => state.setAgreementDuration);
+export const useSetSigTenantName = () => useAgreementStore((state) => state.setSigTenantName);
+export const useSetSigTenantId = () => useAgreementStore((state) => state.setSigTenantId);
+export const useSetSigTenantAddress = () => useAgreementStore((state) => state.setSigTenantAddress);
 export const useSetTenantPhoneNumber = () => useAgreementStore((state) => state.setTenantPhoneNumber);
 export const useClearFields = () => useAgreementStore((state) => state.clearFields);
