@@ -1,33 +1,26 @@
-import { Dispatch, SetStateAction, useState } from "react";
 import { AgreementInput } from "./AgreementInput";
 import { Paragraph } from "./Paragraph";
-import { FormFieldKey, FormValues } from "../-types";
+import { FormFieldKey, SETTERS } from "../-types";
 import { FIELD_PLACEHOLDERS } from "../-constants";
 import { motion } from "motion/react";
+import { useGetAgreementState } from "~/stores/agreementStore";
 
-function FormField({ name, form, setField }: {
+function FormField({ name }: {
   name: FormFieldKey;
-  form: FormValues;
-  setField: (key: FormFieldKey) => (v: string) => void;
 }) {
+  const state = useGetAgreementState();
+  const setter = SETTERS[name]();
+  const value = state[name];
   return (
     <AgreementInput
-      value={form[name] ?? ""}
-      onChange={setField(name)}
+      value={typeof value === "string" ? value : value?.toString() ?? ""}
+      onChange={setter}
       placeholder={FIELD_PLACEHOLDERS[name]}
     />
   );
 }
 
-interface DocumentSectionProps {
-  form: Partial<Record<FormFieldKey, string>>;
-  setForm: Dispatch<SetStateAction<Partial<Record<FormFieldKey, string>>>>
-}
-
-export function DocumentSection({ form, setForm }: DocumentSectionProps) {
-  const setField = (key: string) => (v: string) =>
-    setForm(prev => ({ ...prev, [key]: v }))
-
+export function DocumentSection() {
   return (
     <motion.section
       dir="rtl"
@@ -37,9 +30,9 @@ export function DocumentSection({ form, setForm }: DocumentSectionProps) {
     >
       <Paragraph>
         މިއީ، މއ. އަސްޓްރަލް ބަހައިގެން ގ. ހިޔާ އަތިއްޔާ އަލީ އަށް ލިބުނު ބައިގައި ކޮށްފަހުރި އިމާރާތުގެ{" "}
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރި{" "}
-        <FormField name="tenant_info" form={form} setField={setField} />
+        <FormField name="tenant_info" />
         {" "}އަށް ކުއްޔަށް (އެއް ރޫމް އެޕާޓްމަންތް ފްލެޓް) ދިނުމަށްކުރި އެގްރިމަންޓްއެކެވެ.
       </Paragraph>
 
@@ -49,34 +42,34 @@ export function DocumentSection({ form, setForm }: DocumentSectionProps) {
 
       <Paragraph>
         2- މިއެގްރިމަންޓްގައި މީގެފަހުން "
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރި" އޭ ބުނެފަވަނީ، މއ. އަސްޓްރަލް ބަހައިގެން ގ. ހިޔާ އަތިއްޔާ ޢަލީ އަށް ލިބުނު ބައިގައި ކޮއްފަހުރި ޢިމާރާތުގެ{" "}
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރި (އެއްރޫމް އެޕާޓްމަންޓް ފްލެޓް) އަށެވެ. އަދި "ވެރިފަރާތް" އޭ ބުނެފަވަނީ ކުށްޔަށް ދޫކުރިފަރާތް ގ. ހިޔާ އަތިއްޔާ ޢަލީ (އޭ122280) އަށެވެ. އަދި "ކުއްޔަށްހިފި ފަރާތް" އޭ ބުނެފަވަނީ{" "}
 
-        <FormField name="tenant_info" form={form} setField={setField} />
+        <FormField name="tenant_info" />
         {" "}އަށެވެ. އަދި "ޢިމާރާތް" އޭ ބުނެފަވަނީ، މއ. އަސްޓްރަލް ބަހައިގެން ގ. ހިޔާ އަތިއްޔާ ޢަލީ އަށް ލިބުނު ބައިގައި ކޮށްފަހުރި މުޅިއިމާރާތަށެވެ. އަދި "އެއްބަސްވުން" ބުނެފަވަނީ، އެއްވެސްފަރާތެއްގެ މަޖުބޫރު ކަމެއްނެތި ސަލާމަތް ބުއްދީގައިތިބެ، ކުއްޔަށްދޫކުރި ފަރާތާއި، ކުއްޔަށްހިފި ފަރާތް ވާހަކަދެކެވި މިދެފަރާތް ވެފައިވާ އެއްބަސްވުމަށެވެ.
       </Paragraph>
 
       <Paragraph>
         3-{" "}
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރި ވެރިފަރާތުން ކުއްޔަށް ހިފިފަރާތަށް ކުއްޔަށްދިން މުއްދަތަކީ، އެގްރީމަންޓްފެށޭތާރީހް ދުވަހުން ފެށިގެން އެގްރީމަންޓްނިމޭތާރީހް އަށެވެ. އެއީ މީލާދީ ގޮތުން {" "}
-        <FormField name="agreement_duration" form={form} setField={setField} />
+        <FormField name="agreement_duration" />
         {" "}އަހަރު ދުވަހެވެ.
       </Paragraph>
 
       <Paragraph>
         4- ވެރިފަރާތުން{" "}
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރި ކުއަޔަށް ހިފިފަރާތަށް ކުއްޔަށްދިނީ، ކޮންމެ މީލާދީމަހަކު{" "}
-        <FormField name="rent_amount" form={form} setField={setField} />
+        <FormField name="rent_amount" />
         {" "}ގެ މަހަކު ކުއްޔަށެވެ.
       </Paragraph>
 
       <Paragraph>
         5- މިއެގްރިމެންޓްގައި ސޮއިކުރާއިރު ސެކިއުރިޓީ ފައިސާގެގޮތުގައި{" "}
-        <FormField name="single_deposit" form={form} setField={setField} />
+        <FormField name="single_deposit" />
         {" "}ވެރިފަރާތައް ނުވަތަ ވެރިފަރާތުން ކަނޑައަޅާ ފަރާތަކާ ޙަވާލު ކުރަންވާނެއެވެ. މިސެކިއުރިޓީ ޑިޕޮސިޓް ފައިސާއަކީ ކުއްޔަށްހިފި ފަރާތް އެޕާޓްމަންޓް ދޫކޮދާއިރު ވެރިފަރާތައް ލިބިދާނެ ގެއްލުންތަކަށް ޙަރަދު ކުރުމަށް ބެހެއްޓޭ ފައިސާއެކެވެ. ސެކިއުރިޓީ ޑިޕޮސިޓް ފައިސާ ކުއްޔަށް ހިފިފަރާތަށް ދޫކުރެވޭނީ އެފަދަ ގެއްލުމެއް ލިބިފައިވާނަމަ އެޙަރަދު ކެނޑުމަށްފަހު ބާކީވާފައިސާއެވެ.
       </Paragraph>
 
@@ -86,17 +79,17 @@ export function DocumentSection({ form, setForm }: DocumentSectionProps) {
 
       <Paragraph>
         7- ކުއްޔަށްހިފި ފަރާތުން{" "}
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރި ކުއްޔަށްހިފި މުއްދަތުގެ ތެރޭގައި، އެބުރީގައި ބޭނުންކުރާ ކަރަންޓް ބިލް، ފެން ބިލް އަދި މިނޫންވެސް އެ އެޕާޓްމަންޓްގައި ބޭނުންކުރާ އެފަދަ ބިލްތަކަށް ޤަވާއިދުން ފައިސާ ދައްކަން ޖެހޭނެއެވެ. އަދި ސަރުކާރުގެ އެކިފަރާތްތަކަށް{" "}
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރިން ދައްކަންޖެހޭ ޓެކްސް ފަދަ ހުރިހާ ބިލުތައްވެސް ދައްކާނީ ކުއްޔަށްހިފި ފަރާތުންނެވެ.
       </Paragraph>
 
       <Paragraph>
         8- އިމާރާތުގެ ސާފުތާހިރުކަން ހުރިނެތް މިންވަރު ބެލުމަށްޓަކައި މަހަކު އެއްފަހަރު{" "}
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރި އެތެރެއަށް ވެރިފަރާތް ނުވަތަ އެކަމަށްޓަކައި ވެރިފަރާތުން ކަނޑައަޅާ ފަރާތެއް ވަދެ ފާޙާނާއާއިއެކު ބެލުމުގެ ހުއްދަ، ކުއްޔަ ހިފިފަރާތުން ވެރިފަރާތައް ދޭންވާނެއެވެ. އަދި މިގޮތުން ބަލާބެލުމުގައި،{" "}
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރި ސާފުތާހިރުކަން ނެތުމުގެ ސަބަބުން ޢިމާރާތައް ގެއްލުމެއް ލިބިދާނެކަމަށް ވެރިފަރާތް ފާހަގަކުރާ ކަންކަތައް ކުއްޔަށްހިފި ފަރާތުން ރަނގަޅުކޮން އިޞްލާހު ކުރަންވާނެއެވެ.
       </Paragraph>
 
@@ -106,15 +99,15 @@ export function DocumentSection({ form, setForm }: DocumentSectionProps) {
 
       <Paragraph>
         10-{" "}
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރީގައި (އެޕާޓްމަންޓްގައި) ހަރުކޮއްފައިހުރި އެއްވެސް އެއްޗަކައް އެއްވެސް ބާވަތެއްގެ ގެއްލުމެއް ލިބިއްޖެނަމަ ލަސްނުކޮށް ވެރިފަރާތައް އެކަން އަންގަން ވާނެއެވެ. އަދި އެފަދަ ގެއްލުމެއް މަރާމާތު ކުރަންވާނީ ވެރިފަރާތާއި މަޝްވަރާ ކުރުމަށްފަހު ވެރިފަރާތުން  އަންގާގޮތަކަށެވެ. އަދި ހަލާކުވީއެއްޗެއްގެ ބަދަލުގައި ބަދަލުކުރާ އެއްވެސްއެއްޗެއް، އިމާރާތްކުއްޔަށް ދިންއިރު ހުރި ކޮލިޓީ އަށްވުރެ ދަށްވެގެން ނުވާނެއެވެ.
       </Paragraph>
 
       <Paragraph>
         11-{" "}
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރީގެ ކުނިއާއި އަދި މިނޫންވެސް އެބާވަތުގެ އުކާލަންޖެހޭ ކުނިވާފަދަ ތަކެތި ބަހައްޓަންވާނީ ސިޑިގޮޅި ހަޑިނުވާ ގޮތަކަށް، ރަނގަޅަށް ޕެކްކޮފަ،{" "}
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރީގެ ދޮރުކުރިމަތީން ވެމްކޯގެ ޤަވާއިދުތަކާ އެއްގޮތް ވާގޮތުގެމަތިންނެވެ. އަދި ކުނިބަހަށްޓާ ސަރަހައްދުގެ ސާފުތާހިރުކަން ބެލެހެއްޓުމަކީ ކުއްޔަށް ހިފިފަރާތުގެ ޒިންމާއެކެވެ. ގުރައުންޑް ފްލޯގެ ގޯޅި ގަނޑުގައި ކުނިބެހެއްޓުމަކީ މަނާ ކަމެކެވެ.
       </Paragraph>
 
@@ -124,7 +117,7 @@ export function DocumentSection({ form, setForm }: DocumentSectionProps) {
 
       <Paragraph>
         13- ކުއްޔަށްހިފި ފަރާތުން އެހެން ފަރާތަކަށް{" "}
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރި ކުއްޔަށްދިނުމަކީ މަނާ ކަމެކެވެ.
       </Paragraph>
 
@@ -138,7 +131,7 @@ export function DocumentSection({ form, setForm }: DocumentSectionProps) {
 
       <Paragraph>
         16- މިއެގްރިމެންޓްގެ މުއްދަތު ހަމަވުމަށްފަލު ވެރިފަރާތުން{" "}
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރި އެއްވެސް ފަރާތަކަށް ކުއްޔަށް ދޭނަމަ، ކުއްޔަށް ހިފި ފަރާތަށް އިސްކަންދޭންވާނެއެވެ.
       </Paragraph>
 
@@ -148,9 +141,9 @@ export function DocumentSection({ form, setForm }: DocumentSectionProps) {
 
       <Paragraph>
         18- މި އެގްރިމަންޓްގެ ސަތާރަވަނަ މާއްދާގެ ދަށުން މި އެގްރިމަންޓް ބާތިލް ކުރިނަމަވެސް، ކުއްޔަށްހިފި ފަރާތުން{" "}
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރި ބޭނުންކުރި މުއްދަތަށް ވެރިފަރާތައް މިއެގްރިމަންޓްގެ ދެވަނަ މާއްދާގައި އެއްބަސްވި ކުލި ދައްކަން ޖެހޭނެއެވެ. އަދި ކުއްޔަށްހިފި ފަރާތުގެ ސަބަބުން އިމާރާތަށާއި{" "}
-        <FormField name="floor_number" form={form} setField={setField} />
+        <FormField name="floor_number" />
         ބުރި (އެޕާޓްމަންޓް) އަށް އެއްވެސް ގެއްލުމެއް ލިބިފައި ހުރިނަމަ އެކަމުގެ ޒިންމާ އުފުލުމައްފަހު، ކުއްޔަށްހިފި ފަރާތުން ވެރިފަރާތައް ބަދަލުދިނުމަށް އެއްބަސްވެއެވެ.
       </Paragraph>
 
@@ -166,16 +159,16 @@ export function DocumentSection({ form, setForm }: DocumentSectionProps) {
         -----------------------------------------------------------------<br />
         ކުއްޔަށްހިފި ފަރާތް<br />
         ނަން:{" "}
-        <FormField name="sig_tenant_name" form={form} setField={setField} />
+        <FormField name="sig_tenant_name" />
         <br />
         ދާއިމީ އެޑްރެސް:{" "}
-        <FormField name="sig_tenant_address" form={form} setField={setField} />
+        <FormField name="sig_tenant_address" />
         <br />
         ދ.ރ.ކ. އައިޑީ ކާޑު ނަމްބަރު:{" "}
-        <FormField name="sig_tenant_id" form={form} setField={setField} />
+        <FormField name="sig_tenant_id" />
         <br />
         ފޯނު ނަމްބަރު:{" "}
-        <FormField name="tenant_phone_number" form={form} setField={setField} />
+        <FormField name="tenant_phone_number" />
         <br />
         -----------------------------------------------------------------<br />
       </Paragraph>

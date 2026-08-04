@@ -2,18 +2,19 @@ import { useAuth } from "@clerk/tanstack-react-start";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import AnimatedButton from "~/components/AnimatedButton";
-import { AgreementRequest, FormFieldKey } from "../-types";
+import { AgreementRequest } from "../-types";
 import { Dispatch, SetStateAction } from "react";
 import { base64ToBytes } from "~/utils/utils";
+import { useGetAgreementState } from "~/stores/agreementStore";
 
 interface ControlsProps {
-  form: Partial<Record<FormFieldKey, string>>;
   url: string | null;
   setUrl: Dispatch<SetStateAction<string | null>>;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export function Controls({ form, url, setUrl, setOpen }: ControlsProps) {
+export function Controls({ url, setUrl, setOpen }: ControlsProps) {
+  const state = useGetAgreementState()
   const { getToken } = useAuth();
 
   const { mutateAsync: downloadMutationAsync, isPending: isPendingDownload, isError: isDownloadError, error: downloadError } = useMutation({
@@ -85,16 +86,16 @@ export function Controls({ form, url, setUrl, setOpen }: ControlsProps) {
 
   const handleDownload = async () => {
     const req: AgreementRequest = {
-      tenant_info: form.tenant_info || "",
-      rent_amount: form.rent_amount || "",
-      floor_number: form.floor_number || "",
-      single_deposit: form.single_deposit || "",
-      agreement_duration: form.agreement_duration ? parseInt(form.agreement_duration, 10) : undefined,
+      tenant_info: state.tenant_info || "",
+      rent_amount: state.rent_amount || "",
+      floor_number: state.floor_number || "",
+      single_deposit: state.single_deposit || "",
+      agreement_duration: state.agreement_duration,
       agreement_start: new Date(),
-      sig_tenant_name: form.sig_tenant_name,
-      sig_tenant_id: form.sig_tenant_id,
-      sig_tenant_address: form.sig_tenant_address,
-      tenant_phone_number: form.tenant_phone_number,
+      sig_tenant_name: state.sig_tenant_name,
+      sig_tenant_id: state.sig_tenant_id,
+      sig_tenant_address: state.sig_tenant_address,
+      tenant_phone_number: state.tenant_phone_number,
     };
 
     await toast.promise(
@@ -107,16 +108,16 @@ export function Controls({ form, url, setUrl, setOpen }: ControlsProps) {
 
   const handlePreview = async () => {
     const req: AgreementRequest = {
-      tenant_info: form.tenant_info || "",
-      rent_amount: form.rent_amount || "",
-      floor_number: form.floor_number || "",
-      single_deposit: form.single_deposit || "",
-      agreement_duration: form.agreement_duration ? parseInt(form.agreement_duration, 10) : undefined,
+      tenant_info: state.tenant_info || "",
+      rent_amount: state.rent_amount || "",
+      floor_number: state.floor_number || "",
+      single_deposit: state.single_deposit || "",
+      agreement_duration: state.agreement_duration,
       agreement_start: new Date(),
-      sig_tenant_name: form.sig_tenant_name,
-      sig_tenant_id: form.sig_tenant_id,
-      sig_tenant_address: form.sig_tenant_address,
-      tenant_phone_number: form.tenant_phone_number,
+      sig_tenant_name: state.sig_tenant_name,
+      sig_tenant_id: state.sig_tenant_id,
+      sig_tenant_address: state.sig_tenant_address,
+      tenant_phone_number: state.tenant_phone_number,
     };
 
     await toast.promise(
