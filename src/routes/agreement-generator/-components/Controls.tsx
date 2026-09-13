@@ -55,7 +55,6 @@ export function Controls({ url, setUrl, setOpen }: ControlsProps) {
         setOpen(true);
       };
       const token = await getToken();
-      console.log("Token", token);
       if (!token) throw new Error("You are not authorized to use this endpoint");
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v3/agreement-generator/preview`, {
         method: "POST",
