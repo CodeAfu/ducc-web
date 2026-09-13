@@ -14,10 +14,15 @@ interface ControlsProps {
 }
 
 export function Controls({ url, setUrl, setOpen }: ControlsProps) {
-  const state = useGetAgreementState()
+  const state = useGetAgreementState();
   const { getToken } = useAuth();
 
-  const { mutateAsync: downloadMutationAsync, isPending: isPendingDownload, isError: isDownloadError, error: downloadError } = useMutation({
+  const {
+    mutateAsync: downloadMutationAsync,
+    isPending: isPendingDownload,
+    isError: isDownloadError,
+    error: downloadError,
+  } = useMutation({
     mutationFn: async (req: AgreementRequest) => {
       const token = await getToken();
       if (!token) throw new Error("You are not authorized to use this endpoint");
@@ -30,9 +35,9 @@ export function Controls({ url, setUrl, setOpen }: ControlsProps) {
         body: JSON.stringify(req),
       });
       if (!res.ok) {
-        throw new Error(await res.text())
+        throw new Error(await res.text());
       }
-      return res.blob()
+      return res.blob();
     },
     onSuccess: (blob) => {
       const url = window.URL.createObjectURL(blob);
@@ -49,7 +54,13 @@ export function Controls({ url, setUrl, setOpen }: ControlsProps) {
     },
   })
 
-  const { mutateAsync: previewMutationAsync, isPending: isPendingPreview, isSuccess: isPreviewSuccess, isError: isPreviewError, error: previewError } = useMutation({
+  const {
+    mutateAsync: previewMutationAsync,
+    isPending: isPendingPreview,
+    isSuccess: isPreviewSuccess,
+    isError: isPreviewError,
+    error: previewError,
+  } = useMutation({
     mutationFn: async (req: AgreementRequest) => {
       if (url) {
         setOpen(true);
