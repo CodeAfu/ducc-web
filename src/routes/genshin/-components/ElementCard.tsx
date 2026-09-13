@@ -17,7 +17,13 @@ export default function ElementCard({ title, element, bgColorClass, children, cl
       if (!element) return null;
       const token = await getToken();
       if (!token) throw new Error("token is null");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v3/genshin/elements/${element}/icon`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v3/genshin/elements/${element}/icon`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "image/webp",
+          "Authorization": `Bearer ${token}`,
+        }
+      });
       if (!res.ok) throw new Error(await res.text());
       const blob = await res.blob();
       return URL.createObjectURL(blob);
